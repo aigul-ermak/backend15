@@ -8,8 +8,8 @@ import {BlogsRepository} from '../../blogs/infrastructure/blogs.repository';
 import {CreatePostInputDto, UpdatePostDto} from '../api/models/input/create-post.input.dto';
 import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
-import {CreatePostUseCaseCommand} from "../../../../dist/features/usecases/createPostUseCase";
 import {PostsQueryRepository} from "../infrastructure/posts.query-repository";
+import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 
 @Injectable()
 export class PostsService {

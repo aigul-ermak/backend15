@@ -9,7 +9,7 @@ export class PostsRepository {
     constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {
     }
 
-    async insert(post: Post) {
+    async insert(post: any) {
         const res = await this.postModel.insertMany(post);
         return res[0];
     }

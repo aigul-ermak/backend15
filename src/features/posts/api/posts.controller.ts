@@ -13,11 +13,17 @@ import {
 import {PostsService} from '../application/posts.service';
 import {Blog} from '../../blogs/domain/blog.entity';
 import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
+import {CommandBus, QueryBus} from "@nestjs/cqrs";
+import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
+import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 
 
 @Controller('posts')
 export class PostsController {
-    constructor(private postsService: PostsService) {
+    constructor(
+        private postsService: PostsService,
+        private commandBus: CommandBus,
+        private queryBus: QueryBus,) {
     }
 
     @Post()
@@ -25,18 +31,35 @@ export class PostsController {
         @Body()
             createPostDto: CreatePostInputDto,
     ) {
-        const createdPost = await this.postsService.create(createPostDto);
+        //const createdPost = await this.postsService.create(createPostDto);
 
-        return {
-            id: createdPost.id,
-            title: createdPost.title,
-            shortDescription: createdPost.shortDescription,
-            content: createdPost.content,
-            blogId: createdPost.blogId,
-            blogName: createdPost.blogName,
-            createdAt: createdPost.createdAt,
-            extendedLikesInfo: createdPost.extendedLikesInfo,
-        };
+        const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(createPostDto.blogId));
+
+
+        if (!blog) {
+            throw new NotFoundException('Blog not found');
+        }
+
+        const newCreatePost = {
+            ...createPostDto,
+            blogName: blog.name
+        }
+
+        const createdPost = await this.commandBus.execute(new CreatePostUseCaseCommand(newCreatePost));
+
+
+        console.log(createdPost)
+        // return {
+        //     id: createdPost.id,
+        //     title: createdPost.title,
+        //     shortDescription: createdPost.shortDescription,
+        //     content: createdPost.content,
+        //     blogId: createdPost.blogId,
+        //     blogName: createdPost.blogName,
+        //     createdAt: createdPost.createdAt,
+        //     extendedLikesInfo: createdPost.extendedLikesInfo,
+        // };
+        return true;
     }
 
     @Put(':id')
