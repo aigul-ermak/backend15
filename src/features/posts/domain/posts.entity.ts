@@ -5,7 +5,6 @@ export type PostDocument = HydratedDocument<Post>;
 
 @Schema()
 export class Post {
-    _id: ObjectId;
     @Prop({required: true})
     title: string;
 
