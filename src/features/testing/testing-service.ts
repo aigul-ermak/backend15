@@ -3,7 +3,7 @@ import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
 import {Blog, BlogDocument} from '../blogs/domain/blog.entity';
 import {User, UserDocument} from '../users/domain/users.entity';
-import {Post, PostDocument} from '../posts/posts.schema';
+import {Post, PostDocument} from '../posts/domain/posts.entity';
 
 @Injectable()
 export class TestingService {
