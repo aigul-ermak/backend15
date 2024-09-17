@@ -14,7 +14,6 @@ import {BlogsService} from '../application/blogs.service';
 import {
     CreateBlogInputDto,
     CreatePostToBlogDto,
-    UpdateBlogDto,
 } from './models/input/create-blog.input.dto';
 import {PostsService} from '../../posts/posts.service';
 import {CreateBlogUseCase, CreateBlogUseCaseCommand} from "../../usecases/createBlogUseCase";
@@ -26,6 +25,7 @@ import {GetAllBlogsUseCase, GetAllBlogsUseCaseCommand} from "../../usecases/getA
 import {DeleteBlogByIdUseCaseCommand} from "../../usecases/deleteBlogByIdUseCase";
 import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {UpdateBlogUseCaseCommand} from "../../usecases/updateBlogUseCase";
+import {UpdateBlogDto} from "./models/input/update-blog.input.dto";
 
 @Controller('blogs')
 export class BlogsController {
@@ -59,6 +59,7 @@ export class BlogsController {
         return blog;
     }
 
+    @UseGuards(BasicAuthGuard)
     @Put(':id')
     @HttpCode(204)
     async updateBlog(

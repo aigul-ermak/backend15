@@ -1,8 +1,9 @@
 import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
-import {Model, SortOrder} from 'mongoose';
+import {Model} from 'mongoose';
 import {Blog, BlogDocument} from '../domain/blog.entity';
-import {UpdateBlogDto} from '../api/models/input/create-blog.input.dto';
+import {UpdateBlogDto} from "../api/models/input/update-blog.input.dto";
+
 
 @Injectable()
 export class BlogsRepository {
