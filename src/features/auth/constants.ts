@@ -1,9 +1,9 @@
 import * as process from "process";
 
 export const jwtConstants = {
-    JWT_SECRET: "123",
-    ACCESS_TOKEN_EXPIRY: '30s',
-    REFRESH_TOKEN_EXPIRY: '20s'
+    jwr_secret: process.env.JWT_SECRET,
+    access_token_expiry: process.env.ACCESS_TOKEN_EXPIRY,
+    refresh_token_expiry: process.env.REFRESH_TOKEN_EXPIRY
 };
 
 export const basicConstants = {

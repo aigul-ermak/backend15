@@ -4,43 +4,72 @@ import {
     NestModule,
     Provider,
 } from '@nestjs/common';
-// import { DatabaseModule } from './db/database.module';
 import {MongooseModule} from '@nestjs/mongoose';
-// import { UsersModule } from './users/users.module';
-// import { TestingModule } from './testing/testing-module';
-// import { PostsModule } from './posts/posts.module';
-// import { BlogsModule } from './blogs/blogs.module';
 import {UsersRepository} from './features/users/infrastructure/users.repository';
 import {UsersService} from './features/users/application/users.service';
-import {appSettings} from './settings/app.setting';
 import {User, UsersEntity} from './features/users/domain/users.entity';
 import {UsersController} from './features/users/api/users.controller';
 import {LoggerMiddleware} from './infrastructure/middlewares/logger.middleware';
 import {UsersModule} from "./features/users/users.module";
 import {TestingModule} from "./features/testing/testing-module";
 import {PostsModule} from "./features/posts/posts.module";
-import {BlogsModule} from "./features/blogs/blogs.module";
 import {AuthModule} from './features/auth/auth.module';
 import {AuthController} from './features/auth/api/auth.controller';
 import {AuthService} from './features/auth/application/auth.service';
 import {UsersQueryRepository} from "./features/users/infrastructure/users.query-repository";
 import {EmailModule} from "./features/email/email.module";
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import configuration, {ConfigurationType} from "./settings/configuration";
+import {CreateUserUseCase} from "./features/usecases/createUserUseCase";
+import {CreateBlogUseCase} from "./features/usecases/createBlogUseCase";
+import {GetBlogByIdUseCase} from "./features/usecases/getBlogByIdUseCase";
+import {BlogsController} from "./features/blogs/api/blogs.controller";
+import {PostsController} from "./features/posts/posts.controller";
+import {BlogsRepository} from "./features/blogs/infrastructure/blogs.repository";
+import {BlogsQueryRepository} from "./features/blogs/infrastructure/blogs.query-repository";
+import {BlogsService} from "./features/blogs/application/blogs.service";
+import {BlogsModule} from "./features/blogs/blogs.module";
+import {Blog, BlogEntity} from "./features/blogs/domain/blog.entity";
+import {GetAllBlogsUseCase} from "./features/usecases/getAllBlogsUseCase";
+import {DeleteBlogByIdUseCase} from "./features/usecases/deleteBlogByIdUseCase";
+import {CqrsModule} from "@nestjs/cqrs";
+import {UpdateBlogUseCase} from "./features/usecases/updateBlogUseCase";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
+const blogsProviders: Provider[] = [BlogsRepository, BlogsQueryRepository, BlogsService]
+const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetAllBlogsUseCase,
+    DeleteBlogByIdUseCase, UpdateBlogUseCase]
 
 @Module({
     imports: [
-        MongooseModule.forRoot(
-            appSettings.env.isTesting()
-                ? `${appSettings.api.MONGO_CONNECTION_URI_FOR_TESTS}/${appSettings.api.TEST_DBName}`
-                : `${appSettings.api.MONGO_CONNECTION_URI}/${appSettings.api.MONGO_DBName}`
-        ),
-        // MongooseModule.forRoot(appSettings.api.MONGO_CONNECTION_URI, {
-        //     dbName: appSettings.api.MONGO_DBName,
-        // }),
-        //MongooseModule.forRoot(appSettings.api.MONGO_CONNECTION_URI),
-        MongooseModule.forFeature([{name: User.name, schema: UsersEntity}]),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [configuration],
+            envFilePath: ['.env.development.local', '.env.development', '.env'],
+        }),
+        MongooseModule.forRootAsync({
+            useFactory: (configService: ConfigService<ConfigurationType, true>) => {
+                const environmentSettings = configService.get('environmentSettings', {
+                    infer: true,
+                });
+                const databaseSettings = configService.get('databaseSettings', {
+                    infer: true,
+                });
+                const uri = environmentSettings.isTesting
+                    ? databaseSettings.MONGO_CONNECTION_URI_FOR_TESTS
+                    : databaseSettings.MONGO_CONNECTION_URI;
+
+                return {
+                    uri
+                };
+            },
+            inject: [ConfigService],
+        }),
+        MongooseModule.forFeature([
+            {name: User.name, schema: UsersEntity},
+            {name: Blog.name, schema: BlogEntity}]),
+        CqrsModule,
         UsersModule,
         TestingModule,
         PostsModule,
@@ -48,8 +77,8 @@ const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, Users
         AuthModule,
         EmailModule,
     ],
-    providers: [...usersProviders, AuthService],
-    controllers: [UsersController, AuthController],
+    providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, ...useCases],
+    controllers: [UsersController, AuthController, BlogsController, PostsController],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
