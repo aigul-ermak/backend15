@@ -16,6 +16,7 @@ import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.inpu
 import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
+import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
 
 
 @Controller('posts')
@@ -45,21 +46,10 @@ export class PostsController {
             blogName: blog.name
         }
 
-        const createdPost = await this.commandBus.execute(new CreatePostUseCaseCommand(newCreatePost));
+        const newPostId = await this.commandBus.execute(new CreatePostUseCaseCommand(newCreatePost));
 
-
-        console.log(createdPost)
-        // return {
-        //     id: createdPost.id,
-        //     title: createdPost.title,
-        //     shortDescription: createdPost.shortDescription,
-        //     content: createdPost.content,
-        //     blogId: createdPost.blogId,
-        //     blogName: createdPost.blogName,
-        //     createdAt: createdPost.createdAt,
-        //     extendedLikesInfo: createdPost.extendedLikesInfo,
-        // };
-        return true;
+        const newPost = await this.queryBus.execute(new GetPostByIdUseCaseCommand(newPostId))
+        return newPost;
     }
 
     @Put(':id')
@@ -108,7 +98,12 @@ export class PostsController {
 
     @Get(':id')
     async getPostById(@Param('id') id: string) {
-        return this.postsService.findById(id);
+        const post = this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
+        if (!post) {
+            throw new NotFoundException('Post not found');
+        }
+
+        return post;
     }
 
     @Delete(':id')

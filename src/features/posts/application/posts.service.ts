@@ -10,6 +10,7 @@ import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {PostsQueryRepository} from "../infrastructure/posts.query-repository";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
+import {GetPostByIdUseCase, GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
 
 @Injectable()
 export class PostsService {
@@ -98,25 +99,25 @@ export class PostsService {
     }
 
     async findById(id: string) {
-        const post = await this.postsQueryRepository.findById(id);
-        if (!post) {
-            throw new NotFoundException(`Post with ID ${id} not found`);
-        }
-        return {
-            id: post._id,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt,
-            extendedLikesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: 'None',
-                newestLikes: [],
-            },
-        };
+        const post = await this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
+        // if (!post) {
+        //     throw new NotFoundException(`Post with ID ${id} not found`);
+        // }
+        // return {
+        //     id: post._id,
+        //     title: post.title,
+        //     shortDescription: post.shortDescription,
+        //     content: post.content,
+        //     blogId: post.blogId,
+        //     blogName: post.blogName,
+        //     createdAt: post.createdAt,
+        //     extendedLikesInfo: {
+        //         likesCount: 0,
+        //         dislikesCount: 0,
+        //         myStatus: 'None',
+        //         newestLikes: [],
+        //     },
+        // };
     }
 
     async deletePostById(id: string): Promise<boolean> {

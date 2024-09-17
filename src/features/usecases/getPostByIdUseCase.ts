@@ -15,9 +15,8 @@ export class GetPostByIdUseCase implements IQueryHandler<GetPostByIdUseCaseComma
     }
 
     async execute(query: GetPostByIdUseCaseCommand): Promise<PostOutputModel | null> {
-        console.log(query.id)
+
         const post = await this.postsQueryRepository.findById(query.id);
-        //console.log(query.id)
 
         if (post === null) {
             throw new NotFoundException(`Post not found`);
