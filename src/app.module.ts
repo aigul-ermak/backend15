@@ -24,7 +24,7 @@ import {CreateUserUseCase} from "./features/usecases/createUserUseCase";
 import {CreateBlogUseCase} from "./features/usecases/createBlogUseCase";
 import {GetBlogByIdUseCase} from "./features/usecases/getBlogByIdUseCase";
 import {BlogsController} from "./features/blogs/api/blogs.controller";
-import {PostsController} from "./features/posts/posts.controller";
+import {PostsController} from "./features/posts/api/posts.controller";
 import {BlogsRepository} from "./features/blogs/infrastructure/blogs.repository";
 import {BlogsQueryRepository} from "./features/blogs/infrastructure/blogs.query-repository";
 import {BlogsService} from "./features/blogs/application/blogs.service";

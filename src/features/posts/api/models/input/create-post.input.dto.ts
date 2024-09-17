@@ -1,7 +1,7 @@
 import {IsString, Length} from "class-validator";
-import {Trim} from "../../../infrastructure/decorators/transform/trim";
+import {Trim} from "../../../../../infrastructure/decorators/transform/trim";
 
-export class CreatePostDto {
+export class CreatePostInputDto {
     @IsString()
     @Trim()
     @Length(1, 30, {message: "Length not correct"})

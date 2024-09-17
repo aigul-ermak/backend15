@@ -10,9 +10,9 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
-import {PostsService} from './posts.service';
-import {Blog} from '../blogs/domain/blog.entity';
-import {CreatePostDto, UpdatePostDto} from './dto/create-post.dto';
+import {PostsService} from '../application/posts.service';
+import {Blog} from '../../blogs/domain/blog.entity';
+import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
 
 
 @Controller('posts')
@@ -23,9 +23,8 @@ export class PostsController {
     @Post()
     async create(
         @Body()
-            createPostDto: CreatePostDto,
+            createPostDto: CreatePostInputDto,
     ) {
-        //const { title, shortDescription, content, blogId } = createPostDto;
         const createdPost = await this.postsService.create(createPostDto);
 
         return {
