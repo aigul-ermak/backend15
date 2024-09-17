@@ -17,7 +17,7 @@ import {
     UpdateBlogDto,
 } from './models/input/create-blog.input.dto';
 import {PostsService} from '../../posts/posts.service';
-import {CreateBlogUseCase} from "../../usecases/createBlogUseCase";
+import {CreateBlogUseCase, CreateBlogUseCaseCommand} from "../../usecases/createBlogUseCase";
 import {GetBlogByIdUseCase, GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {BlogOutputModel} from "./models/output/blog.output.model";
 import {BasicAuthGuard} from "../../auth/basic-auth.guard";
@@ -48,9 +48,7 @@ export class BlogsController {
             createBlogDto: CreateBlogInputDto,
     ): Promise<BlogOutputModel> {
 
-        const newBlogId = await this.createBlogUseCase.execute(
-            createBlogDto
-        );
+        const newBlogId = await this.commandBus.execute(new CreateBlogUseCaseCommand(createBlogDto))
 
         const blog: BlogOutputModel | null = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(newBlogId));
 
