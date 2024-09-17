@@ -22,7 +22,7 @@ import {GetBlogByIdUseCase, GetBlogByIdUseCaseCommand} from "../../usecases/getB
 import {BlogOutputModel} from "./models/output/blog.output.model";
 import {BasicAuthGuard} from "../../auth/basic-auth.guard";
 import {SortBlogsDto} from "./models/input/sort-blog.input.dto";
-import {GetAllBlogsUseCase} from "../../usecases/getAllBlogsUseCase";
+import {GetAllBlogsUseCase, GetAllBlogsUseCaseCommand} from "../../usecases/getAllBlogsUseCase";
 import {DeleteBlogByIdUseCaseCommand} from "../../usecases/deleteBlogByIdUseCase";
 import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {UpdateBlogUseCaseCommand} from "../../usecases/updateBlogUseCase";
@@ -103,7 +103,7 @@ export class BlogsController {
     @Get()
     async getAllBlogs(
         @Query() sortData: SortBlogsDto) {
-        return this.getAllBlogsUseCase.execute(sortData);
+        return this.queryBus.execute(new GetAllBlogsUseCaseCommand(sortData))
     }
 
     @Get(':id/posts')
