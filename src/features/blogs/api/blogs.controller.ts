@@ -15,7 +15,7 @@ import {
     CreateBlogInputDto,
     CreatePostToBlogDto,
 } from './models/input/create-blog.input.dto';
-import {PostsService} from '../../posts/posts.service';
+import {PostsService} from '../../posts/application/posts.service';
 import {CreateBlogUseCase, CreateBlogUseCaseCommand} from "../../usecases/createBlogUseCase";
 import {GetBlogByIdUseCase, GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {BlogOutputModel} from "./models/output/blog.output.model";
