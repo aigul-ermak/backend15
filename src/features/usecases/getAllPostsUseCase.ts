@@ -23,9 +23,18 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsUseCaseCom
         const posts = await this.postsQueryRepository
             .findAllPostsPaginated(sortBy, sortDirection, (pageNumber - 1) * pageSize, pageSize);
 
+        console.log(posts)
+
         const totalCount = await this.postsQueryRepository.countDocuments();
 
+        console.log(totalCount, "totalCount")
+
         const pageCount = Math.ceil(totalCount / pageSize);
+
+        console.log(pageCount, "pageCount")
+
+        const mappedPosts = posts.map(PostOutputModelMapper);
+        console.log(mappedPosts)
 
         return {
             pagesCount: pageCount,

@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model, SortOrder} from 'mongoose';
 import {Post, PostDocument} from '../domain/posts.entity';
+import {SortPostsDto} from "../api/models/input/sort-post.input.dto";
 
 @Injectable()
 export class PostsQueryRepository {
@@ -17,33 +18,21 @@ export class PostsQueryRepository {
     }
 
     async findAllPostsPaginated(
-        sort: string,
-        sortDirection: 'asc' | 'desc',
-        page: number,
-        pageSize: number,
+        sortBy: string,
+        sortDirection: string,
+        skip: number,
+        limit: number
     ) {
-        const validPage = Math.max(page, 1);
-        const skip = (validPage - 1) * pageSize;
-        const sortOption: { [key: string]: SortOrder } = {
-            [sort]: sortDirection === 'asc' ? 1 : -1,
-        };
+        const sortOrder = sortDirection === 'desc' ? -1 : 1;
 
-        return this.postModel
+        const result = await this.postModel
             .find()
-            .sort(sortOption)
+            .sort({[sortBy]: sortOrder})
             .skip(skip)
-            .limit(pageSize)
-            .exec()
-        // const skip = (page - 1) * pageSize;
-        // const sortOption: { [key: string]: SortOrder } = {
-        //     [sort]: sortDirection === 'asc' ? 1 : -1,
-        // };
-        //
-        // const [posts, totalCount] = await Promise.all([
-        //     this.postModel.find().sort(sortOption).skip(skip).limit(pageSize).exec(), // Sort by createdAt
-        //     this.postModel.countDocuments(),
-        // ]);
-        //return posts;
+            .limit(limit)
+            .exec();
+
+        return result;
     }
 
     async countDocuments(): Promise<number> {

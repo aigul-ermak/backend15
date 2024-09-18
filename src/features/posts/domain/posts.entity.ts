@@ -27,7 +27,7 @@ export class Post {
     likesCount: number;
 
     @Prop({default: 0})
-    dislikeCount: number;
+    dislikesCount: number;
 
     static create(
         title: string,

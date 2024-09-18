@@ -33,7 +33,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
 
         const newCreatePost = {
             ...command.post,
-            blogName: blog.name
+            blogName: blog.name,
+            createdAt: Date.now(),
         }
 
         const createdPost = await this.postsRepository.insert(newCreatePost);

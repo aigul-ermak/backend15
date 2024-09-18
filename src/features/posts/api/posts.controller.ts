@@ -27,7 +27,7 @@ export class PostsController {
     constructor(
         private postsService: PostsService,
         private commandBus: CommandBus,
-        private queryBus: QueryBus,) {
+    ) {
     }
 
     @UseGuards(BasicAuthGuard)
@@ -50,12 +50,6 @@ export class PostsController {
         return await this.commandBus.execute(new UpdatePostUseCaseCommand(id, updatePostDto));
     }
 
-    @Get()
-    async getAllPosts(
-        @Query() sortData: SortPostsDto) {
-        return await this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData));
-    }
-
     @Get(':id')
     async getPostById(@Param('id') id: string) {
         const post = await this.commandBus.execute(new GetPostByIdUseCaseCommand(id));
@@ -64,8 +58,14 @@ export class PostsController {
             throw new NotFoundException(`Post not found`);
         }
         return post;
-
     }
+
+    @Get()
+    async getAllPosts(
+        @Query() sortData: SortPostsDto) {
+        return await this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData));
+    }
+
 
     @Delete(':id')
     @HttpCode(204)
