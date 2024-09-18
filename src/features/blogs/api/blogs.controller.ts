@@ -80,7 +80,7 @@ export class BlogsController {
     }
 
     @Post(':id/posts')
-    async createPost(
+    async createPostForBlog(
         @Param('id') blogId: string,
         @Body()
             createPostToBlogDto: CreatePostToBlogDto,
@@ -91,27 +91,8 @@ export class BlogsController {
             blogId,
         }
 
-        const post = await this.commandBus.execute(new CreatePostUseCaseCommand(createdPost))
+        return await this.commandBus.execute(new CreatePostUseCaseCommand(createdPost));
 
-        console.log(post)
-
-        return post;
-        // const createdPost = await this.postsService.create({
-        //     ...createPostToBlogDto,
-        //     blogId,
-        // });
-
-
-        // return {
-        //     id: createdPost.id,
-        //     title: createdPost.title,
-        //     shortDescription: createdPost.shortDescription,
-        //     content: createdPost.content,
-        //     blogId: createdPost.blogId,
-        //     blogName: createdPost.blogName,
-        //     createdAt: createdPost.createdAt,
-        //     extendedLikesInfo: createdPost.extendedLikesInfo,
-        // };
     }
 
     @Get()
