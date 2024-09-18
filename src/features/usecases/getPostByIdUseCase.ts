@@ -1,5 +1,5 @@
 import {NotFoundException} from "@nestjs/common";
-import {IQueryHandler, QueryHandler} from "@nestjs/cqrs";
+import {CommandHandler, ICommandHandler, IQueryHandler, QueryHandler} from "@nestjs/cqrs";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
 import {PostOutputModel, PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
 
@@ -9,14 +9,14 @@ export class GetPostByIdUseCaseCommand {
     }
 }
 
-@QueryHandler(GetPostByIdUseCaseCommand)
-export class GetPostByIdUseCase implements IQueryHandler<GetPostByIdUseCaseCommand> {
+@CommandHandler(GetPostByIdUseCaseCommand)
+export class GetPostByIdUseCase implements ICommandHandler<GetPostByIdUseCaseCommand> {
     constructor(private postsQueryRepository: PostsQueryRepository) {
     }
 
     async execute(query: GetPostByIdUseCaseCommand): Promise<PostOutputModel | null> {
 
-        const post = await this.postsQueryRepository.findById(query.id);
+        const post = await this.postsQueryRepository.getPostById(query.id);
 
         if (post === null) {
             throw new NotFoundException(`Post not found`);

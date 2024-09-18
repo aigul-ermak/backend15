@@ -35,9 +35,7 @@ export class PostsController {
         @Body()
             createPostDto: CreatePostInputDto,
     ) {
-
         return await this.commandBus.execute(new CreatePostUseCaseCommand(createPostDto));
-
     }
 
     @UseGuards(BasicAuthGuard)
@@ -54,22 +52,24 @@ export class PostsController {
     @Get()
     async getAllPosts(
         @Query() sortData: SortPostsDto) {
-        return this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData));
+        return await this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData));
     }
 
     @Get(':id')
     async getPostById(@Param('id') id: string) {
-        const post = this.commandBus.execute(new GetPostByIdUseCaseCommand(id));
-        if (!post) {
-            throw new NotFoundException('Post not found');
-        }
+        const post = await this.commandBus.execute(new GetPostByIdUseCaseCommand(id));
 
+        if (!post) {
+            throw new NotFoundException(`Post not found`);
+        }
         return post;
+
     }
 
     @Delete(':id')
     @HttpCode(204)
     async deletePost(@Param('id') id: string): Promise<void> {
+
         const result = await this.postsService.deletePostById(id);
         if (!result) {
             throw new NotFoundException(`Blog with id ${id} not found`);
