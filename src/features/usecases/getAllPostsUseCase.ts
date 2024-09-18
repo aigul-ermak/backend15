@@ -1,4 +1,4 @@
-import {IQueryHandler, QueryHandler} from "@nestjs/cqrs";
+import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
 import {SortPostsDto} from "../posts/api/models/input/sort-post.input.dto";
 import {PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
@@ -9,8 +9,8 @@ export class GetAllPostsUseCaseCommand {
     }
 }
 
-@QueryHandler(GetAllPostsUseCaseCommand)
-export class GetAllPostsUseCase implements IQueryHandler<GetAllPostsUseCaseCommand> {
+@CommandHandler(GetAllPostsUseCaseCommand)
+export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsUseCaseCommand> {
     constructor(private postsQueryRepository: PostsQueryRepository) {
     }
 
@@ -20,13 +20,11 @@ export class GetAllPostsUseCase implements IQueryHandler<GetAllPostsUseCaseComma
         const pageNumber = command.sortData.pageNumber ?? 1;
         const pageSize = command.sortData.pageSize ?? 10;
 
-        const postsResult = await this.postsQueryRepository
+        const posts = await this.postsQueryRepository
             .findAllPostsPaginated(sortBy, sortDirection, (pageNumber - 1) * pageSize, pageSize);
 
         const totalCount = await this.postsQueryRepository.countDocuments();
 
-        const posts = postsResult.posts;
-        console.log(posts)
         const pageCount = Math.ceil(totalCount / pageSize);
 
         return {
