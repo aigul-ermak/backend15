@@ -3,8 +3,6 @@ import {NotFoundException} from "@nestjs/common";
 import {UpdatePostDto} from "../posts/api/models/input/create-post.input.dto";
 import {PostsRepository} from "../posts/infrastructure/posts.repository";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
-import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-repository";
-import {GetPostByIdUseCaseCommand} from "./getPostByIdUseCase";
 
 
 export class UpdatePostUseCaseCommand {
