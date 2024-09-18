@@ -26,6 +26,7 @@ import {DeleteBlogByIdUseCaseCommand} from "../../usecases/deleteBlogByIdUseCase
 import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {UpdateBlogUseCaseCommand} from "../../usecases/updateBlogUseCase";
 import {UpdateBlogDto} from "./models/input/update-blog.input.dto";
+import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 
 @Controller('blogs')
 export class BlogsController {
@@ -84,21 +85,33 @@ export class BlogsController {
         @Body()
             createPostToBlogDto: CreatePostToBlogDto,
     ) {
-        const createdPost = await this.postsService.create({
+
+        const createdPost = {
             ...createPostToBlogDto,
             blogId,
-        });
+        }
 
-        return {
-            id: createdPost.id,
-            title: createdPost.title,
-            shortDescription: createdPost.shortDescription,
-            content: createdPost.content,
-            blogId: createdPost.blogId,
-            blogName: createdPost.blogName,
-            createdAt: createdPost.createdAt,
-            extendedLikesInfo: createdPost.extendedLikesInfo,
-        };
+        const post = await this.commandBus.execute(new CreatePostUseCaseCommand(createdPost))
+
+        console.log(post)
+
+        return post;
+        // const createdPost = await this.postsService.create({
+        //     ...createPostToBlogDto,
+        //     blogId,
+        // });
+
+
+        // return {
+        //     id: createdPost.id,
+        //     title: createdPost.title,
+        //     shortDescription: createdPost.shortDescription,
+        //     content: createdPost.content,
+        //     blogId: createdPost.blogId,
+        //     blogName: createdPost.blogName,
+        //     createdAt: createdPost.createdAt,
+        //     extendedLikesInfo: createdPost.extendedLikesInfo,
+        // };
     }
 
     @Get()
