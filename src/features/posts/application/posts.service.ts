@@ -121,7 +121,7 @@ export class PostsService {
     }
 
     async deletePostById(id: string): Promise<boolean> {
-        return await this.postsRepository.deleteById(id);
+        return await this.postsRepository.deletePostById(id);
     }
 
     async findByBlogId(blogId: string): Promise<PostDocument[]> {

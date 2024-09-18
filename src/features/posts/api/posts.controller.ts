@@ -19,6 +19,7 @@ import {BasicAuthGuard} from "../../auth/basic-auth.guard";
 import {UpdatePostUseCaseCommand} from "../../usecases/updatePostUseCase";
 import {SortPostsDto} from "./models/input/sort-post.input.dto";
 import {GetAllPostsUseCaseCommand} from "../../usecases/getAllPostsUseCase";
+import {DeletePostByIdUseCaseCommand} from "../../usecases/deletePostByIdUseCase";
 
 
 @Controller('posts')
@@ -70,9 +71,10 @@ export class PostsController {
     @HttpCode(204)
     async deletePost(@Param('id') id: string): Promise<void> {
 
-        const result = await this.postsService.deletePostById(id);
+        const result = await this.commandBus.execute(new DeletePostByIdUseCaseCommand(id));
+
         if (!result) {
-            throw new NotFoundException(`Blog with id ${id} not found`);
+            throw new NotFoundException(`Post not found`);
         }
     }
 }
