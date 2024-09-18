@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import {PostsService} from '../application/posts.service';
 import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
-import {CommandBus, QueryBus} from "@nestjs/cqrs";
+import {CommandBus} from "@nestjs/cqrs";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
 import {BasicAuthGuard} from "../../auth/basic-auth.guard";

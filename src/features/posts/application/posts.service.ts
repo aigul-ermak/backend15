@@ -5,12 +5,12 @@ import {InjectModel} from '@nestjs/mongoose';
 import {Blog, BlogDocument} from '../../blogs/domain/blog.entity';
 import {Model} from 'mongoose';
 import {BlogsRepository} from '../../blogs/infrastructure/blogs.repository';
-import {CreatePostInputDto, UpdatePostDto} from '../api/models/input/create-post.input.dto';
+import {CreatePostInputDto} from '../api/models/input/create-post.input.dto';
 import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {PostsQueryRepository} from "../infrastructure/posts.query-repository";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
-import {GetPostByIdUseCase, GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
+import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
 
 @Injectable()
 export class PostsService {
