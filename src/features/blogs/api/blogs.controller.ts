@@ -107,60 +107,60 @@ export class BlogsController {
         return this.queryBus.execute(new GetAllBlogsUseCaseCommand(sortData))
     }
 
-    @Get(':id/posts')
-    async getPostsForBlog(
-        @Param('id') id: string,
-        @Query('pageNumber') pageNumber?: number,
-        @Query('pageSize') pageSize?: number,
-        @Query('sortBy') sortBy?: string,
-        @Query('sortDirection') sortDirection?: string,
-    ) {
-
-        const sort = sortBy ?? 'createdAt';
-        const direction = sortDirection?.toLowerCase() === 'asc' ? 'asc' : 'desc';
-        const page = pageNumber ?? 1;
-        const size = pageSize ?? 10;
-
-        const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(id));
-
-        if (!blog) {
-            throw new NotFoundException('Blog not found');
-        }
-
-        const totalCount = await this.postsService.countByBlogId(id);
-        const pagesCount = Math.ceil(totalCount / +size);
-
-        const skip = (page - 1) * size;
-        const posts = await this.postsService.findByBlogIdPaginated(
-            id,
-            skip,
-            size,
-            sort,
-            direction,
-        );
-
-        return {
-            pagesCount,
-            page: +page,
-            pageSize: +size,
-            totalCount,
-            items: posts.map((post) => ({
-                id: post._id.toString(),
-                title: post.title,
-                shortDescription: post.shortDescription,
-                content: post.content,
-                blogId: post.blogId,
-                blogName: post.blogName,
-                createdAt: post.createdAt,
-                extendedLikesInfo: {
-                    likesCount: 0,
-                    dislikesCount: 0,
-                    myStatus: 'None',
-                    newestLikes: [],
-                },
-            })),
-        };
-    }
+    // @Get(':id/posts')
+    // async getPostsForBlog(
+    //     @Param('id') id: string,
+    //     @Query('pageNumber') pageNumber?: number,
+    //     @Query('pageSize') pageSize?: number,
+    //     @Query('sortBy') sortBy?: string,
+    //     @Query('sortDirection') sortDirection?: string,
+    // ) {
+    //
+    //     const sort = sortBy ?? 'createdAt';
+    //     const direction = sortDirection?.toLowerCase() === 'asc' ? 'asc' : 'desc';
+    //     const page = pageNumber ?? 1;
+    //     const size = pageSize ?? 10;
+    //
+    //     const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(id));
+    //
+    //     if (!blog) {
+    //         throw new NotFoundException('Blog not found');
+    //     }
+    //
+    //     const totalCount = await this.postsService.countByBlogId(id);
+    //     const pagesCount = Math.ceil(totalCount / +size);
+    //
+    //     const skip = (page - 1) * size;
+    //     const posts = await this.postsService.findByBlogIdPaginated(
+    //         id,
+    //         skip,
+    //         size,
+    //         sort,
+    //         direction,
+    //     );
+    //
+    //     return {
+    //         pagesCount,
+    //         page: +page,
+    //         pageSize: +size,
+    //         totalCount,
+    //         items: posts.map((post) => ({
+    //             id: post._id.toString(),
+    //             title: post.title,
+    //             shortDescription: post.shortDescription,
+    //             content: post.content,
+    //             blogId: post.blogId,
+    //             blogName: post.blogName,
+    //             createdAt: post.createdAt,
+    //             extendedLikesInfo: {
+    //                 likesCount: 0,
+    //                 dislikesCount: 0,
+    //                 myStatus: 'None',
+    //                 newestLikes: [],
+    //             },
+    //         })),
+    //     };
+    // }
 
     @Get(':id')
     async getBlogById(@Param('id') id: string) {

@@ -63,40 +63,40 @@ export class PostsService {
         };
     }
 
-    async findAllPaginated(
-        page: number,
-        pageSize: number,
-        sort: string,
-        direction: 'asc' | 'desc',
-    ): Promise<{ posts: any[]; totalCount: number }> {
-        const {posts, totalCount} = await this.postsQueryRepository.findAllPaginated(
-            page,
-            pageSize,
-            sort,
-            direction,
-        );
-
-        const mappedPosts = posts.map((post) => ({
-            id: post._id,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt,
-            extendedLikesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: 'None',
-                newestLikes: [],
-            },
-        }));
-
-        return {
-            posts: mappedPosts,
-            totalCount,
-        };
-    }
+    // async findAllPaginated(
+    //     page: number,
+    //     pageSize: number,
+    //     sort: string,
+    //     direction: 'asc' | 'desc',
+    // ): Promise<{ posts: any[]; totalCount: number }> {
+    //     const {posts, totalCount} = await this.postsQueryRepository.findAllPaginated(
+    //         page,
+    //         pageSize,
+    //         sort,
+    //         direction,
+    //     );
+    //
+    //     const mappedPosts = posts.map((post) => ({
+    //         id: post._id,
+    //         title: post.title,
+    //         shortDescription: post.shortDescription,
+    //         content: post.content,
+    //         blogId: post.blogId,
+    //         blogName: post.blogName,
+    //         createdAt: post.createdAt,
+    //         extendedLikesInfo: {
+    //             likesCount: 0,
+    //             dislikesCount: 0,
+    //             myStatus: 'None',
+    //             newestLikes: [],
+    //         },
+    //     }));
+    //
+    //     return {
+    //         posts: mappedPosts,
+    //         totalCount,
+    //     };
+    // }
 
     async findById(id: string) {
         const post = await this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
@@ -132,27 +132,27 @@ export class PostsService {
         return await this.postsQueryRepository.countByBlogId(blogId);
     }
 
-    async findByBlogIdPaginated(
-        blogId: string,
-        skip: number,
-        limit: number,
-        sort: string,
-        direction: 'asc' | 'desc',
-    ) {
-        return await this.postsQueryRepository.findByBlogIdPaginated(
-            blogId,
-            skip,
-            limit,
-            sort,
-            direction,
-        );
-    }
+    // async findByBlogIdPaginated(
+    //     blogId: string,
+    //     skip: number,
+    //     limit: number,
+    //     sort: string,
+    //     direction: 'asc' | 'desc',
+    // ) {
+    //     return await this.postsQueryRepository.findByBlogIdPaginated(
+    //         blogId,
+    //         skip,
+    //         limit,
+    //         sort,
+    //         direction,
+    //     );
+    // }
 
-    async update(id: string, updatePostDto: UpdatePostDto) {
-        const updatedPost = await this.postsRepository.update(id, updatePostDto);
-        if (!updatedPost) {
-            throw new NotFoundException(`Post with ID ${id} not found`);
-        }
-        return updatedPost;
-    }
+    // async update(id: string, updatePostDto: UpdatePostDto) {
+    //     const updatedPost = await this.postsRepository.update(id, updatePostDto);
+    //     if (!updatedPost) {
+    //         throw new NotFoundException(`Post with ID ${id} not found`);
+    //     }
+    //     return updatedPost;
+    // }
 }

@@ -21,12 +21,12 @@ export class PostsQueryRepository {
         return this.postModel.findById(id).exec();
     }
 
-    async findAllPaginated(
-        page: number,
-        pageSize: number,
+    async findAllPostsPaginated(
         sort: string,
         sortDirection: 'asc' | 'desc',
-    ): Promise<{ posts: PostDocument[]; totalCount: number }> {
+        page: number,
+        pageSize: number,
+    ) {
         const skip = (page - 1) * pageSize;
         const sortOption: { [key: string]: SortOrder } = {
             [sort]: sortDirection === 'asc' ? 1 : -1,
@@ -37,6 +37,10 @@ export class PostsQueryRepository {
             this.postModel.countDocuments(),
         ]);
         return {posts, totalCount};
+    }
+
+    async countDocuments(): Promise<number> {
+        return this.postModel.countDocuments().exec();
     }
 
     // async deleteById(id: string): Promise<boolean> {
@@ -53,22 +57,24 @@ export class PostsQueryRepository {
     }
 
     async findByBlogIdPaginated(
-        blogId: string,
-        skip: number,
-        limit: number,
         sort: string,
-        direction: 'asc' | 'desc',
+        sortDirection: 'asc' | 'desc',
+        page: number,
+        pageSize: number,
     ): Promise<PostDocument[]> {
+        const validPage = Math.max(page, 1); // Ensure page is at least 1
+        const skip = (validPage - 1) * pageSize;
         const sortOption: { [key: string]: SortOrder } = {
-            [sort]: direction === 'asc' ? 1 : -1,
+            [sort]: sortDirection === 'asc' ? 1 : -1,
         };
 
         return this.postModel
-            .find({blogId})
+            .find()
             .sort(sortOption)
             .skip(skip)
-            .limit(limit)
-            .exec();
+            .limit(pageSize)
+            .exec()
+
     }
 
     // async update(id: string, updatePostDto: UpdatePostDto) {

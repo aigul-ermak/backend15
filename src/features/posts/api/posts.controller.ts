@@ -18,6 +18,10 @@ import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
 import {BasicAuthGuard} from "../../auth/basic-auth.guard";
+import {UpdatePostUseCaseCommand} from "../../usecases/updatePostUseCase";
+import {SortPostsDto} from "./models/input/sort-post.input.dto";
+import {GetAllBlogsUseCaseCommand} from "../../usecases/getAllBlogsUseCase";
+import {GetAllPostsUseCaseCommand} from "../../usecases/getAllPostsUseCase";
 
 
 @Controller('posts')
@@ -52,48 +56,27 @@ export class PostsController {
         return newPost;
     }
 
+    @UseGuards(BasicAuthGuard)
     @Put(':id')
     @HttpCode(204)
     async updatePost(
         @Param('id') id: string,
         @Body() updatePostDto: UpdatePostDto,
     ) {
-        return this.postsService.update(id, updatePostDto);
+
+        const post = await this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
+
+        if (!post) {
+            throw new NotFoundException('Post not found');
+        }
+
+        return await this.commandBus.execute(new UpdatePostUseCaseCommand(id, updatePostDto));
     }
 
     @Get()
     async getAllPosts(
-        @Query('pageNumber') pageNumber: number,
-        @Query('pageSize') pageSize: number,
-        @Query('sortBy') sortBy?: string,
-        @Query('sortDirection') sortDirection?: string,
-    ): Promise<{
-        pagesCount: number;
-        page: number;
-        pageSize: number;
-        totalCount: number;
-        items: Blog[];
-    }> {
-        const sort = sortBy ?? 'createdAt';
-        const direction = sortDirection?.toLowerCase() === 'asc' ? 'asc' : 'desc';
-        const page = pageNumber ?? 1;
-        const size = pageSize ?? 10;
-
-        const {posts, totalCount} = await this.postsService.findAllPaginated(
-            page,
-            size,
-            sort,
-            direction,
-        );
-        const pagesCount = Math.ceil(totalCount / size);
-
-        return {
-            pagesCount,
-            page: +page,
-            pageSize: +size,
-            totalCount,
-            items: posts,
-        };
+        @Query() sortData: SortPostsDto) {
+        return this.queryBus.execute(new GetAllPostsUseCaseCommand(sortData));
     }
 
     @Get(':id')
