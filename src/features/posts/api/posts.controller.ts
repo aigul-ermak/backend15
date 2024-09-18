@@ -8,7 +8,7 @@ import {
     Param,
     Post,
     Put,
-    Query,
+    Query, UseGuards,
 } from '@nestjs/common';
 import {PostsService} from '../application/posts.service';
 import {Blog} from '../../blogs/domain/blog.entity';
@@ -17,6 +17,7 @@ import {CommandBus, QueryBus} from "@nestjs/cqrs";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
+import {BasicAuthGuard} from "../../auth/basic-auth.guard";
 
 
 @Controller('posts')
@@ -27,13 +28,12 @@ export class PostsController {
         private queryBus: QueryBus,) {
     }
 
+    @UseGuards(BasicAuthGuard)
     @Post()
     async create(
         @Body()
             createPostDto: CreatePostInputDto,
     ) {
-        //const createdPost = await this.postsService.create(createPostDto);
-
         const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(createPostDto.blogId));
 
 
