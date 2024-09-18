@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model, SortOrder} from 'mongoose';
 import {Post, PostDocument} from '../domain/posts.entity';
-import {SortPostsDto} from "../api/models/input/sort-post.input.dto";
+
 
 @Injectable()
 export class PostsQueryRepository {
@@ -27,6 +27,7 @@ export class PostsQueryRepository {
 
         const result = await this.postModel
             .find()
+            .lean()
             .sort({[sortBy]: sortOrder})
             .skip(skip)
             .limit(limit)
