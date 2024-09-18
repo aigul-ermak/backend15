@@ -38,22 +38,9 @@ export class PostsController {
         @Body()
             createPostDto: CreatePostInputDto,
     ) {
-        const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(createPostDto.blogId));
 
+        return await this.commandBus.execute(new CreatePostUseCaseCommand(createPostDto));
 
-        if (!blog) {
-            throw new NotFoundException('Blog not found');
-        }
-
-        const newCreatePost = {
-            ...createPostDto,
-            blogName: blog.name
-        }
-
-        const newPostId = await this.commandBus.execute(new CreatePostUseCaseCommand(newCreatePost));
-
-        const newPost = await this.queryBus.execute(new GetPostByIdUseCaseCommand(newPostId))
-        return newPost;
     }
 
     @UseGuards(BasicAuthGuard)
