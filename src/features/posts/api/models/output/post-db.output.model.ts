@@ -12,14 +12,18 @@ export class PostOutputModel {
         likesCount: number,
         dislikesCount: number,
         myStatus: string,
-        newestLikes: [],
+        newestLikes: {
+            addedAt: string;
+            userId: string;
+            login: string;
+        }[],
     };
 }
 
 export const PostOutputModelMapper = (post: PostDocument): PostOutputModel => {
     const outputModel = new PostOutputModel();
 
-    outputModel.id = post.id.toString();
+    outputModel.id = post._id.toString();
     outputModel.title = post.title;
     outputModel.shortDescription = post.shortDescription;
     outputModel.content = post.content;
@@ -31,7 +35,13 @@ export const PostOutputModelMapper = (post: PostDocument): PostOutputModel => {
         likesCount: post.likesCount ?? 0,
         dislikesCount: post.dislikesCount ?? 0,
         myStatus: 'None',
-        newestLikes: [],
+        newestLikes: [
+            {
+                addedAt: "",
+                userId: 'string',
+                login: 'string'
+            }
+        ],
     }
 
     return outputModel;
