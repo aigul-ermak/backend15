@@ -25,43 +25,43 @@ export class PostsService {
     ) {
     }
 
-    async create(createPostDto: CreatePostInputDto) {
-        const {title, shortDescription, content, blogId} = createPostDto;
-
-        //const blog = await this.blogModel.findById(blogId).exec();
-        const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(blogId));
-
-
-        if (!blog) {
-            throw new NotFoundException('Blog not found');
-        }
-
-        const post = Post.create(
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blog.name,
-        );
-        // const createdPost = await this.postsRepository.insert(post);
-        const createdPost = await this.commandBus.execute(new CreatePostUseCaseCommand(post));
-
-        return {
-            id: createdPost._id,
-            title: createdPost.title,
-            shortDescription: createdPost.shortDescription,
-            content: createdPost.content,
-            blogId: createdPost.blogId,
-            blogName: blog.name,
-            createdAt: createdPost.createdAt,
-            extendedLikesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: 'None',
-                newestLikes: [],
-            },
-        };
-    }
+    // async create(createPostDto: CreatePostInputDto) {
+    //     const {title, shortDescription, content, blogId} = createPostDto;
+    //
+    //     //const blog = await this.blogModel.findById(blogId).exec();
+    //     const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(blogId));
+    //
+    //
+    //     if (!blog) {
+    //         throw new NotFoundException('Blog not found');
+    //     }
+    //
+    //     const post = Post.create(
+    //         title,
+    //         shortDescription,
+    //         content,
+    //         blogId,
+    //         blog.name,
+    //     );
+    //     // const createdPost = await this.postsRepository.insert(post);
+    //     const createdPost = await this.commandBus.execute(new CreatePostUseCaseCommand(post));
+    //
+    //     return {
+    //         id: createdPost._id,
+    //         title: createdPost.title,
+    //         shortDescription: createdPost.shortDescription,
+    //         content: createdPost.content,
+    //         blogId: createdPost.blogId,
+    //         blogName: blog.name,
+    //         createdAt: createdPost.createdAt,
+    //         extendedLikesInfo: {
+    //             likesCount: 0,
+    //             dislikesCount: 0,
+    //             myStatus: 'None',
+    //             newestLikes: [],
+    //         },
+    //     };
+    // }
 
     // async findAllPaginated(
     //     page: number,
@@ -98,39 +98,39 @@ export class PostsService {
     //     };
     // }
 
-    async findById(id: string) {
-        const post = await this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
-        // if (!post) {
-        //     throw new NotFoundException(`Post with ID ${id} not found`);
-        // }
-        // return {
-        //     id: post._id,
-        //     title: post.title,
-        //     shortDescription: post.shortDescription,
-        //     content: post.content,
-        //     blogId: post.blogId,
-        //     blogName: post.blogName,
-        //     createdAt: post.createdAt,
-        //     extendedLikesInfo: {
-        //         likesCount: 0,
-        //         dislikesCount: 0,
-        //         myStatus: 'None',
-        //         newestLikes: [],
-        //     },
-        // };
-    }
-
-    async deletePostById(id: string): Promise<boolean> {
-        return await this.postsRepository.deletePostById(id);
-    }
-
-    async findByBlogId(blogId: string): Promise<PostDocument[]> {
-        return await this.postsQueryRepository.findByBlogId(blogId);
-    }
-
-    async countByBlogId(blogId: string): Promise<number> {
-        return await this.postsQueryRepository.countByBlogId(blogId);
-    }
+    // async findById(id: string) {
+    //     const post = await this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
+    // if (!post) {
+    //     throw new NotFoundException(`Post with ID ${id} not found`);
+    // }
+    // return {
+    //     id: post._id,
+    //     title: post.title,
+    //     shortDescription: post.shortDescription,
+    //     content: post.content,
+    //     blogId: post.blogId,
+    //     blogName: post.blogName,
+    //     createdAt: post.createdAt,
+    //     extendedLikesInfo: {
+    //         likesCount: 0,
+    //         dislikesCount: 0,
+    //         myStatus: 'None',
+    //         newestLikes: [],
+    //     },
+    // };
+    // }
+    //
+    // async deletePostById(id: string): Promise<boolean> {
+    //     return await this.postsRepository.deletePostById(id);
+    // }
+    //
+    // async findByBlogId(blogId: string): Promise<PostDocument[]> {
+    //     return await this.postsQueryRepository.findByBlogId(blogId);
+    // }
+    //
+    // async countByBlogId(blogId: string): Promise<number> {
+    //     return await this.postsQueryRepository.countByBlogId(blogId);
+    // }
 
     // async findByBlogIdPaginated(
     //     blogId: string,

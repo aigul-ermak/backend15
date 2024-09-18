@@ -10,7 +10,6 @@ import {
     Put,
     Query, UseGuards,
 } from '@nestjs/common';
-import {PostsService} from '../application/posts.service';
 import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
 import {CommandBus} from "@nestjs/cqrs";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
@@ -25,7 +24,6 @@ import {DeletePostByIdUseCaseCommand} from "../../usecases/deletePostByIdUseCase
 @Controller('posts')
 export class PostsController {
     constructor(
-        private postsService: PostsService,
         private commandBus: CommandBus,
     ) {
     }

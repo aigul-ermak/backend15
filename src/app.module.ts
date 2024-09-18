@@ -41,13 +41,14 @@ import {GetPostByIdUseCase} from "./features/usecases/getPostByIdUseCase";
 import {UpdatePostUseCase} from "./features/usecases/updatePostUseCase";
 import {GetAllPostsUseCase} from "./features/usecases/getAllPostsUseCase";
 import {DeletePostByIdUseCase} from "./features/usecases/deletePostByIdUseCase";
+import {GetAllPostsForBlogUseCase} from "./features/usecases/getAllPostsForBlogUseCase";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
 const blogsProviders: Provider[] = [BlogsRepository, BlogsQueryRepository, BlogsService]
 const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetAllBlogsUseCase,
     DeleteBlogByIdUseCase, UpdateBlogUseCase, CreatePostUseCase, GetPostByIdUseCase,
-    UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase]
+    UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase]
 
 @Module({
     imports: [

@@ -48,7 +48,8 @@ export class PostsQueryRepository {
         return this.postModel.countDocuments({blogId}).exec();
     }
 
-    async findByBlogIdPaginated(
+    async findPostsByBlogIdPaginated(
+        blogId: string,
         sort: string,
         sortDirection: 'asc' | 'desc',
         page: number,
@@ -61,7 +62,7 @@ export class PostsQueryRepository {
         };
 
         return this.postModel
-            .find()
+            .find({blogId})
             .sort(sortOption)
             .skip(skip)
             .limit(pageSize)
