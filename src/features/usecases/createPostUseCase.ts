@@ -4,11 +4,11 @@ import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-reposito
 import {NotFoundException} from "@nestjs/common";
 import {CreatePostInputDto} from "../posts/api/models/input/create-post.input.dto";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
+import {PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
 
 
 export class CreatePostUseCaseCommand {
 
-    // TODO
     constructor(public post: CreatePostInputDto) {
     }
 }
@@ -34,7 +34,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
         const newCreatePost = {
             ...command.post,
             blogName: blog.name,
-            createdAt: Date.now(),
+            createdAt: new Date(Date.now()),
         }
 
         const createdPost = await this.postsRepository.insert(newCreatePost);
@@ -45,6 +45,6 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
             throw new NotFoundException(`Blog not found`);
         }
 
-        return post;
+        return PostOutputModelMapper(post);
     }
 }
