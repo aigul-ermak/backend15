@@ -51,12 +51,6 @@ export class PostsController {
         @Body() updatePostDto: UpdatePostDto,
     ) {
 
-        const post = await this.queryBus.execute(new GetPostByIdUseCaseCommand(id));
-
-        if (!post) {
-            throw new NotFoundException('Post not found');
-        }
-
         return await this.commandBus.execute(new UpdatePostUseCaseCommand(id, updatePostDto));
     }
 
