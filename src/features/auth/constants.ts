@@ -1,13 +1,13 @@
 import * as process from "process";
 
 export const jwtAccessConstants = {
-    jwt_secret: process.env.JWT_SECRET,
-    access_token_expiry: process.env.ACCESS_TOKEN_EXPIRY,
+    jwt_secret: process.env.JWT_SECRET || 'defaultAccessSecret',
+    access_token_expiry: process.env.ACCESS_TOKEN_EXPIRY || '20s',
 };
 
 export const jwtRefreshConstants = {
-    jwt_secret: process.env.JWT_SECRET,
-    refresh_token_expiry: process.env.REFRESH_TOKEN_EXPIRY,
+    jwt_secret: process.env.JWT_SECRET || 'defaultRefreshSecret',
+    refresh_token_expiry: process.env.REFRESH_TOKEN_EXPIRY || '7d',
 };
 
 export const basicConstants = {

@@ -8,9 +8,10 @@ import {v4 as uuidv4} from 'uuid';
 import {CreateUserDto} from "../../users/api/models/input/create-user.input.dto";
 import bcrypt from "bcrypt";
 import * as dateFns from "date-fns";
-import {jwtConstants} from "../constants";
+import {jwtAccessConstants, jwtRefreshConstants} from "../constants";
 import {UserWithIdOutputModel} from "../../users/api/models/output/user.output.model";
 import {UserDBModel} from "../../users/api/models/input/user-db.input.model";
+import {UserLoginDto} from "../api/models/input/login-user.input.dto";
 
 
 @Injectable()
@@ -48,9 +49,32 @@ export class AuthService {
         return user;
     }
 
-    async loginUser(user: any) {
-        const payload = {loginOrEmail: user.email, id: user.id};
-        return {accessToken: this.jwtService.sign(payload, {secret: jwtConstants.jwr_secret})};
+    async loginUser(loginDto: UserLoginDto,
+                    userIP: string,
+                    userDevice: string,
+                    userAgent: string) {
+
+        const {loginOrEmail, password} = loginDto
+
+        const user = await this.validateUser(loginOrEmail, password);
+
+        if (!user) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
+        const payload = {loginOrEmail, id: user.id};
+
+        const accessToken = this.jwtService.sign(payload,
+            {secret: jwtAccessConstants.jwt_secret})
+ 
+        const refreshToken = this.jwtService.sign({
+            id: user.id,
+            userIP,
+            userDevice,
+            userAgent
+        }, {secret: jwtRefreshConstants.jwt_secret});
+
+        return {accessToken, refreshToken};
     }
 
     async createUser(createUserDto: CreateUserDto) {

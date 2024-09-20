@@ -4,23 +4,16 @@ import {
     Controller,
     Get,
     HttpCode,
-    HttpStatus,
     Post,
     Req,
-    UnauthorizedException,
+    Res,
     UseGuards,
-    ValidationPipe
 } from '@nestjs/common';
+import {Response} from 'express';
 import {UsersService} from "../../users/application/users.service";
-import {UsersQueryRepository} from "../../users/infrastructure/users.query-repository";
 import {AuthService} from "../application/auth.service";
-// import {AuthGuard} from "@nestjs/passport";
-import {LocalAuthGuard} from "../local-auth.guard";
-import {BasicAuthGuard} from "../basic-auth.guard";
 import {UserLoginDto} from "./models/input/login-user.input.dto";
 import {CreateUserDto} from "../../users/api/models/input/create-user.input.dto";
-import {UserOutputModel} from "../../users/api/models/output/user.output.model";
-import {OutputUserItemType} from "../../users/types/user.types";
 import {AuthGuard} from "../../../infrastructure/guards/auth.guard";
 import {ResendEmailDto} from "../../email/models/input/email.input.dto";
 
@@ -40,17 +33,24 @@ export class AuthController {
     // @UseGuards(LocalAuthGuard)
     @Post('/login')
     @HttpCode(200)
-    async login(@Body() loginDto: UserLoginDto) {
+    async login(@Body() loginDto: UserLoginDto,
+                @Res() res: Response,) {
 
+        const userIP: string = "testuserip";
+        const userDevice: string = "testdeviceid";
+        const userAgent: string = "user-agent";
 
-        const user = await this.authService.validateUser(loginDto.loginOrEmail, loginDto.password);
+        const {accessToken, refreshToken} = await this
+            .authService.loginUser(loginDto, userIP, userDevice, userAgent);
 
-        if (user !== null) {
-            return await this.authService.loginUser(user);
-        } else {
-            throw new UnauthorizedException('Invalid credentials');
-        }
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
 
+        return res.json({accessToken});
     }
 
     //
