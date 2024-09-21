@@ -21,6 +21,7 @@ async function bootstrap() {
     const environmentSettings = configService.get('environmentSettings', {
         infer: true,
     });
+    
     const port = apiSettings.PORT;
 
     await app.listen(appSettings.api.APP_PORT, () => {
