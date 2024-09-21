@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -8,8 +9,9 @@ import {
     Param,
     Post,
     Put,
-    Query, UseGuards,
+    Query, Req, UseGuards,
 } from '@nestjs/common';
+import {Request} from 'express';
 import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
 import {CommandBus} from "@nestjs/cqrs";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
@@ -19,6 +21,9 @@ import {UpdatePostUseCaseCommand} from "../../usecases/updatePostUseCase";
 import {SortPostsDto} from "./models/input/sort-post.input.dto";
 import {GetAllPostsUseCaseCommand} from "../../usecases/getAllPostsUseCase";
 import {DeletePostByIdUseCaseCommand} from "../../usecases/deletePostByIdUseCase";
+import {CreateLikeForPostUseCaseCommand} from "../../usecases/createLikeForPostUseCase";
+import {LikeStatusInputDto} from "../../like/api/model/like-status.input.dto";
+import {JwtAuthGuard} from "../../auth/jwt-auth.guard";
 
 
 @Controller('posts')
@@ -47,6 +52,22 @@ export class PostsController {
 
         return await this.commandBus.execute(new UpdatePostUseCaseCommand(id, updatePostDto));
     }
+
+
+    @Put(':id/like-status')
+    @HttpCode(204)
+    @UseGuards(JwtAuthGuard)
+    async createLikeForPost(
+        @Param('id') postId: string,
+        @Body() likeStatus: LikeStatusInputDto,
+        @Req() req: Request
+    ) {
+        const userId = req[userId];
+
+        return await this.commandBus.execute(
+            new CreateLikeForPostUseCaseCommand(postId, likeStatus, userId));
+    }
+
 
     @Get(':id')
     async getPostById(@Param('id') id: string) {
