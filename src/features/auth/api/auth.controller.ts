@@ -33,8 +33,7 @@ export class AuthController {
     // @UseGuards(LocalAuthGuard)
     @Post('/login')
     @HttpCode(200)
-    async login(@Body() loginDto: UserLoginDto,
-                @Res() res: Response,) {
+    async login(@Body() loginDto: UserLoginDto, @Res() res: Response,) {
 
         const userIP: string = "testuserip";
         const userDevice: string = "testdeviceid";

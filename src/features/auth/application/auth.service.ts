@@ -49,10 +49,7 @@ export class AuthService {
         return user;
     }
 
-    async loginUser(loginDto: UserLoginDto,
-                    userIP: string,
-                    userDevice: string,
-                    userAgent: string) {
+    async loginUser(loginDto: UserLoginDto, userIP: string, userDevice: string, userAgent: string) {
 
         const {loginOrEmail, password} = loginDto
 
@@ -66,7 +63,7 @@ export class AuthService {
 
         const accessToken = this.jwtService.sign(payload,
             {secret: jwtAccessConstants.jwt_secret})
- 
+
         const refreshToken = this.jwtService.sign({
             id: user.id,
             userIP,
