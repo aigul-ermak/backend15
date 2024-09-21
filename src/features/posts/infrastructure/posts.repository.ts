@@ -24,4 +24,29 @@ export class PostsRepository {
             .findByIdAndUpdate(id, updatePostDto, {new: true})
             .exec();
     }
+
+    async incrementLikeCount(id: string) {
+        await this.postModel.updateOne({_id: id}, {
+            $inc: {likesCount: 1}
+        });
+    }
+
+
+    async decrementLikeCount(id: string) {
+        await this.postModel.updateOne({_id: id}, {
+            $inc: {likesCount: -1}
+        });
+    }
+
+    async incrementDislikeCount(id: string) {
+        await this.postModel.updateOne({_id: id}, {
+            $inc: {dislikesCount: 1}
+        });
+    }
+
+    async decrementDislikeCount(id: string) {
+        await this.postModel.updateOne({_id: id}, {
+            $inc: {dislikesCount: -1}
+        });
+    }
 }
