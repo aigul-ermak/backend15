@@ -42,13 +42,17 @@ import {UpdatePostUseCase} from "./features/usecases/updatePostUseCase";
 import {GetAllPostsUseCase} from "./features/usecases/getAllPostsUseCase";
 import {DeletePostByIdUseCase} from "./features/usecases/deletePostByIdUseCase";
 import {GetAllPostsForBlogUseCase} from "./features/usecases/getAllPostsForBlogUseCase";
+import {CreateLikeForPostUseCase} from "./features/usecases/createLikeForPostUseCase";
+import {LikesRepository} from "./features/like/infrastructure/likes.repository";
+import {LikesQueryRepository} from "./features/like/infrastructure/likes.query-repository";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
 const blogsProviders: Provider[] = [BlogsRepository, BlogsQueryRepository, BlogsService]
 const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetAllBlogsUseCase,
     DeleteBlogByIdUseCase, UpdateBlogUseCase, CreatePostUseCase, GetPostByIdUseCase,
-    UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase]
+    UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase,
+    CreateLikeForPostUseCase]
 
 @Module({
     imports: [
@@ -87,7 +91,8 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
         AuthModule,
         EmailModule,
     ],
-    providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, PostsService, ...useCases],
+    providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, PostsService,
+        LikesRepository, LikesQueryRepository, ...useCases],
     controllers: [UsersController, AuthController, BlogsController, PostsController],
 })
 export class AppModule implements NestModule {
