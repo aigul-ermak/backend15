@@ -62,7 +62,7 @@ export class PostsController {
         @Body() likeStatus: LikeStatusInputDto,
         @Req() req: Request
     ) {
-        const userId = req[userId];
+        const userId = req['userId'];
 
         return await this.commandBus.execute(
             new CreateLikeForPostUseCaseCommand(postId, likeStatus, userId));
