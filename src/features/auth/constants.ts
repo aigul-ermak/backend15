@@ -2,7 +2,7 @@ import * as process from "process";
 
 export const jwtAccessConstants = {
     jwt_secret: process.env.JWT_SECRET || 'defaultAccessSecret',
-    access_token_expiry: process.env.ACCESS_TOKEN_EXPIRY || '20s',
+    access_token_expiry: process.env.ACCESS_TOKEN_EXPIRY || '5m',
 };
 
 export const jwtRefreshConstants = {
