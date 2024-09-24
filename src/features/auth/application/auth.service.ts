@@ -64,15 +64,14 @@ export class AuthService {
 
         const payload = {loginOrEmail, id: user.id};
 
-        const accessToken = this.jwtService.sign(payload,
-            {secret: jwtAccessConstants.jwt_secret})
- 
+        const accessToken = this.jwtService.sign(payload)
+
         const refreshToken = this.jwtService.sign({
             id: user.id,
             userIP,
             userDevice,
             userAgent
-        }, {secret: jwtRefreshConstants.jwt_secret});
+        }, {secret: jwtRefreshConstants.jwt_secret, expiresIn: jwtRefreshConstants.refresh_token_expiry});
 
         return {accessToken, refreshToken};
     }
