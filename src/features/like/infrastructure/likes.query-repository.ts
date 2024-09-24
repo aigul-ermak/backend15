@@ -1,13 +1,13 @@
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
-import {Post} from "../../posts/domain/posts.entity";
+
 import {Model} from "mongoose";
-import {LIKE_STATUS, LikeDocument} from "../domain/like.entity";
+import {Like, LIKE_STATUS, LikeDocument} from "../domain/like.entity";
 
 
 @Injectable()
 export class LikesQueryRepository {
-    constructor(@InjectModel(Post.name) private likeModel: Model<LikeDocument>) {
+    constructor(@InjectModel(Like.name) private likeModel: Model<LikeDocument>) {
     }
 
     async getLike(parentId: string, userId: string) {
@@ -21,7 +21,8 @@ export class LikesQueryRepository {
             .limit(3);
     }
 
-    async checkLike(parentId: string, userId: string) {
+    async checkLike({parentId, userId}: { parentId: string, userId: string }) {
+        // arguments
         const res = await this.likeModel.findOne({parentId: parentId, userId: userId}).lean();
         return !!res;
     }

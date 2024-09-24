@@ -1,15 +1,12 @@
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsRepository} from "../posts/infrastructure/posts.repository";
-import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-repository";
 import {BadRequestException, NotFoundException} from "@nestjs/common";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
-import {PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
-import {JwtService} from "@nestjs/jwt";
 import {LikesRepository} from "../like/infrastructure/likes.repository";
 import {UsersQueryRepository} from "../users/infrastructure/users.query-repository";
 import {LikesQueryRepository} from "../like/infrastructure/likes.query-repository";
-import {LikeStatusInputDto} from "../like/api/model/like-status.input.dto";
 import {LIKE_STATUS} from "../like/domain/like.entity";
+import {LikeStatusInputDto} from "../like/api/model/like-status.input.dto";
 
 
 export class CreateLikeForPostUseCaseCommand {
@@ -47,12 +44,12 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
             throw new BadRequestException();
         }
 
-        const isLikeExist = await this.likeQueryRepository.checkLike(user.id, post.id);
+        const isLikeExist = await this.likeQueryRepository.checkLike({parentId: post.id, userId: user.id,});
 
         if (!isLikeExist) {
 
             const newLike = {
-                status: command.likeStatus,
+                status: command.likeStatus.likeStatus,
                 userId: command.userId,
                 parentId: command.postId,
                 login: user?.login,
@@ -61,29 +58,39 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
 
             const res = await this.likeRepository.createLike(newLike);
 
-            if ((command.likeStatus as unknown as LIKE_STATUS) == LIKE_STATUS.LIKE) {
+            if (command.likeStatus.likeStatus == LIKE_STATUS.LIKE) {
                 await this.postsRepository.incrementLikeCount(command.postId,);
-            } else if ((command.likeStatus as unknown as LIKE_STATUS) === LIKE_STATUS.DISLIKE) {
+            } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
                 await this.postsRepository.incrementDislikeCount(command.postId,);
             }
             return res;
         } else {
 
             like = await this.likeQueryRepository.getLike(command.postId, command.userId);
-            if (like!.status !== command.likeStatus) {
+
+            if (like!.status !== command.likeStatus.likeStatus) {
+
                 if (like!.status === LIKE_STATUS.LIKE) {
-                    await this.postsRepository.decrementLikeCount(command.postId,);
+                    await this.postsRepository.decrementLikeCount(command.postId);
                 } else if (like!.status === LIKE_STATUS.DISLIKE) {
-                    await this.postsRepository.decrementDislikeCount(command.postId,);
+                    await this.postsRepository.decrementDislikeCount(command.postId);
                 }
 
-                if ((command.likeStatus as unknown as LIKE_STATUS) === LIKE_STATUS.LIKE) {
+                if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
                     await this.postsRepository.incrementLikeCount(command.postId,);
-                } else if ((command.likeStatus as unknown as LIKE_STATUS) === LIKE_STATUS.DISLIKE) {
+                } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
                     await this.postsRepository.incrementDislikeCount(command.postId,);
                 }
+
+            } else {
+                if (like!.status === LIKE_STATUS.LIKE) {
+                    await this.postsRepository.decrementLikeCount(command.postId);
+                } else if (like!.status === LIKE_STATUS.DISLIKE) {
+                    await this.postsRepository.decrementDislikeCount(command.postId);
+                }
+                this.likeRepository.deleteLikeStatus(command.postId, command.userId);
             }
-            like!.status = command.likeStatus;
+
 
             return await this.likeRepository.updateLike(like!._id.toString(), like);
         }

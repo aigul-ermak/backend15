@@ -45,6 +45,8 @@ import {GetAllPostsForBlogUseCase} from "./features/usecases/getAllPostsForBlogU
 import {CreateLikeForPostUseCase} from "./features/usecases/createLikeForPostUseCase";
 import {LikesRepository} from "./features/like/infrastructure/likes.repository";
 import {LikesQueryRepository} from "./features/like/infrastructure/likes.query-repository";
+import {LikesModule} from "./features/like/likes.module";
+import {Like, LikesEntity} from "./features/like/domain/like.entity";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
@@ -82,7 +84,8 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
         MongooseModule.forFeature([
             {name: User.name, schema: UsersEntity},
             {name: Blog.name, schema: BlogEntity},
-            {name: Post.name, schema: PostsEntity}]),
+            {name: Post.name, schema: PostsEntity},
+            {name: Like.name, schema: LikesEntity}]),
         CqrsModule,
         UsersModule,
         TestingModule,
@@ -90,6 +93,7 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
         BlogsModule,
         AuthModule,
         EmailModule,
+        LikesModule,
     ],
     providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, PostsService,
         LikesRepository, LikesQueryRepository, ...useCases],
