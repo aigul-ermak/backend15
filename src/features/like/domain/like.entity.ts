@@ -26,15 +26,15 @@ export class Like {
     @Prop({required: true})
     createdAt: Date;
 
-    static create(userId: string, parentId: string, login: string, status: LIKE_STATUS): Like {
-        const like = new Like();
-        like.userId = userId;
-        like.parentId = parentId;
-        like.login = login;
-        like.status = status;
-        like.createdAt = new Date();
-        return like;
-    }
+    // static create(userId: string, parentId: string, login: string, status: LIKE_STATUS): Like {
+    //     const like = new Like();
+    //     like.userId = userId;
+    //     like.parentId = parentId;
+    //     like.login = login;
+    //     like.status = status;
+    //     like.createdAt = new Date();
+    //     return like;
+    // }
 }
 
-export const LikeSchema = SchemaFactory.createForClass(Like);
+export const LikesEntity = SchemaFactory.createForClass(Like);
