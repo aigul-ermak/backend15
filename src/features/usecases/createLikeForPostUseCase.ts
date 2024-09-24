@@ -2,11 +2,11 @@ import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsRepository} from "../posts/infrastructure/posts.repository";
 import {BadRequestException, NotFoundException} from "@nestjs/common";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
-import {LikesRepository} from "../like/infrastructure/likes.repository";
+import {LikesRepository} from "../likePost/infrastructure/likes.repository";
 import {UsersQueryRepository} from "../users/infrastructure/users.query-repository";
-import {LikesQueryRepository} from "../like/infrastructure/likes.query-repository";
-import {LIKE_STATUS} from "../like/domain/like.entity";
-import {LikeStatusInputDto} from "../like/api/model/like-status.input.dto";
+import {LikesQueryRepository} from "../likePost/infrastructure/likes.query-repository";
+import {LIKE_STATUS} from "../likePost/domain/like.entity";
+import {LikeStatusInputDto} from "../likePost/api/model/like-status.input.dto";
 
 
 export class CreateLikeForPostUseCaseCommand {

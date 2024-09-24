@@ -6,7 +6,7 @@ import {TestingService} from './testing-service';
 import {Blog, BlogEntity} from '../blogs/domain/blog.entity';
 import {Post, PostsEntity} from '../posts/domain/posts.entity';
 import {User, UsersEntity} from '../users/domain/users.entity';
-import {Like, LikesEntity} from "../like/domain/like.entity";
+import {Like, LikesEntity} from "../likePost/domain/like.entity";
 
 @Module({
     imports: [

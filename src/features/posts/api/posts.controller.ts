@@ -22,7 +22,7 @@ import {SortPostsDto} from "./models/input/sort-post.input.dto";
 import {GetAllPostsUseCaseCommand} from "../../usecases/getAllPostsUseCase";
 import {DeletePostByIdUseCaseCommand} from "../../usecases/deletePostByIdUseCase";
 import {CreateLikeForPostUseCaseCommand} from "../../usecases/createLikeForPostUseCase";
-import {LikeStatusInputDto} from "../../like/api/model/like-status.input.dto";
+import {LikeStatusInputDto} from "../../likePost/api/model/like-status.input.dto";
 import {JwtAuthGuard} from "../../auth/jwt-auth.guard";
 
 
@@ -54,7 +54,7 @@ export class PostsController {
     }
 
 
-    @Put(':id/like-status')
+    @Put(':id/likePost-status')
     @HttpCode(204)
     @UseGuards(JwtAuthGuard)
     async createLikeForPost(

@@ -43,10 +43,10 @@ import {GetAllPostsUseCase} from "./features/usecases/getAllPostsUseCase";
 import {DeletePostByIdUseCase} from "./features/usecases/deletePostByIdUseCase";
 import {GetAllPostsForBlogUseCase} from "./features/usecases/getAllPostsForBlogUseCase";
 import {CreateLikeForPostUseCase} from "./features/usecases/createLikeForPostUseCase";
-import {LikesRepository} from "./features/like/infrastructure/likes.repository";
-import {LikesQueryRepository} from "./features/like/infrastructure/likes.query-repository";
-import {LikesModule} from "./features/like/likes.module";
-import {Like, LikesEntity} from "./features/like/domain/like.entity";
+import {LikesRepository} from "./features/likePost/infrastructure/likes.repository";
+import {LikesQueryRepository} from "./features/likePost/infrastructure/likes.query-repository";
+import {LikesModule} from "./features/likePost/likes.module";
+import {Like, LikesEntity} from "./features/likePost/domain/like.entity";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];

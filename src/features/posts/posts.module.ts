@@ -8,7 +8,7 @@ import {Blog, BlogEntity} from '../blogs/domain/blog.entity';
 import {BlogsRepository} from '../blogs/infrastructure/blogs.repository';
 import {PostsQueryRepository} from "./infrastructure/posts.query-repository";
 import {CqrsModule} from "@nestjs/cqrs";
-import {LikesModule} from "../like/likes.module";
+import {LikesModule} from "../likePost/likes.module";
 
 @Module({
     imports: [

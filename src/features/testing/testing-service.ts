@@ -4,7 +4,7 @@ import {Model} from 'mongoose';
 import {Blog, BlogDocument} from '../blogs/domain/blog.entity';
 import {User, UserDocument} from '../users/domain/users.entity';
 import {Post, PostDocument} from '../posts/domain/posts.entity';
-import {Like, LikeDocument} from "../like/domain/like.entity";
+import {Like, LikeDocument} from "../likePost/domain/like.entity";
 
 @Injectable()
 export class TestingService {
