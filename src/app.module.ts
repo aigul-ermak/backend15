@@ -61,6 +61,7 @@ import {UpdateCommentUseCase} from "./features/usecases/updateCommentUseCase";
 import {LikesCommentRepository} from "./features/likeComment/infrastructure/likes-comment.repository";
 import {LikesCommentQueryRepository} from "./features/likeComment/infrastructure/likes-comment.query-repository";
 import {LikeComment, LikesCommentEntity} from "./features/likeComment/domain/like-comment.entity";
+import {CommentsController} from "./features/comments/api/model/comments.controller";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
@@ -120,7 +121,7 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
     providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, PostsService,
         LikesRepository, LikesQueryRepository, CommentsRepository, CommentsQueryRepository,
         LikesCommentRepository, LikesCommentQueryRepository, ...useCases],
-    controllers: [UsersController, AuthController, BlogsController, PostsController],
+    controllers: [UsersController, AuthController, BlogsController, PostsController, CommentsController],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
