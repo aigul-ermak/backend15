@@ -20,7 +20,7 @@ export class PostOutputModel {
     };
 }
 
-export const PostOutputModelMapper = (post: PostDocument): PostOutputModel => {
+export const PostOutputModelMapper = (post: PostDocument, newestLikes: any[]): PostOutputModel => {
     const outputModel = new PostOutputModel();
 
     outputModel.id = post._id.toString();
@@ -35,13 +35,18 @@ export const PostOutputModelMapper = (post: PostDocument): PostOutputModel => {
         likesCount: post.likesCount ?? 0,
         dislikesCount: post.dislikesCount ?? 0,
         myStatus: 'None',
-        newestLikes: [
-            {
-                addedAt: "",
-                userId: 'string',
-                login: 'string'
-            }
-        ],
+        newestLikes: newestLikes.map(like => ({
+            addedAt: like.addedAt,
+            userId: like.userId,
+            login: like.login
+        }))
+        // newestLikes: [
+        //     {
+        //         addedAt: "",
+        //         userId: 'string',
+        //         login: 'string'
+        //     }
+        // ],
     }
 
     return outputModel;
