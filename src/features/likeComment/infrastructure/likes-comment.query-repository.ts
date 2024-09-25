@@ -8,7 +8,12 @@ export class LikesCommentQueryRepository {
     constructor(@InjectModel(LikeComment.name) private likeCommentModel: Model<LikeCommentDocument>) {
     }
 
-    async getLike() {
+    async getLike(commentId: string, userId: string) {
+        return await this.likeCommentModel.findOne({parentId: commentId, userId: userId});
+    }
 
+    async checkLike({commentId, userId}: { commentId: string, userId: string }) {
+        const res = await this.likeCommentModel.findOne({commentId: commentId, userId: userId}).lean();
+        return !!res;
     }
 }
