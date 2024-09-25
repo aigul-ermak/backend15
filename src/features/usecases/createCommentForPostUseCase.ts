@@ -4,8 +4,8 @@ import {PostsQueryRepository} from "../posts/infrastructure/posts.query-reposito
 import {UsersQueryRepository} from "../users/infrastructure/users.query-repository";
 import {CreateCommentInputDto} from "../comments/api/model/input/create-comment.input.dto";
 import {CommentsRepository} from "../comments/infrastructure/comments.repository";
-import {PostCommentOutputModelMapper} from "../posts/api/models/output/post-comment.output.model";
 import {CommentsQueryRepository} from "../comments/infrastructure/comments.query-repository";
+import {CommentOutputModelMapper} from "../comments/api/model/output/comment-output.model";
 
 
 export class CreateCommentForPostUseCaseCommand {
@@ -43,7 +43,7 @@ export class CreateCommentForPostUseCase implements ICommandHandler<CreateCommen
 
 // TODO type?
         const newComment = {
-            posId: command.postId,
+            postId: command.postId,
             content: command.comment.content,
             commentatorInfo: {
                 userId: user.id,
@@ -59,8 +59,8 @@ export class CreateCommentForPostUseCase implements ICommandHandler<CreateCommen
 
         const commentId = await this.commentRepository.createComment(newComment);
 
-        const postComment = await this.commentQueryRepository.getCommentById(commentId);
+        const comment = await this.commentQueryRepository.getCommentById(commentId);
 
-        return PostCommentOutputModelMapper(postComment);
+        return CommentOutputModelMapper(comment);
     }
 }

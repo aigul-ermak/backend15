@@ -1,14 +1,15 @@
 import {NotFoundException} from "@nestjs/common";
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
-import {PostOutputModel, PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
 import {CommentsQueryRepository} from "../comments/infrastructure/comments.query-repository";
 import {SortPostsDto} from "../posts/api/models/input/sort-post.input.dto";
-import {CommentOutputModel, CommentOutputModelMapper} from "../comments/api/model/output/comment-output.model";
+import {CommentOutputModelMapper} from "../comments/api/model/output/comment-output.model";
 
 
 export class GetCommentsForPostUseCaseCommand {
-    constructor(public postId: string, public sortData: SortPostsDto) {
+    constructor(
+        public postId: string,
+        public sortData: SortPostsDto) {
     }
 }
 
@@ -20,7 +21,7 @@ export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsFor
     ) {
     }
 
-    async execute(query: GetCommentsForPostUseCaseCommand) {
+    async execute(command: GetCommentsForPostUseCaseCommand) {
 
         const sortBy = command.sortData.sortBy ?? 'createdAt';
         const sortDirection = command.sortData.sortDirection ?? 'desc';
@@ -33,13 +34,13 @@ export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsFor
             throw new NotFoundException(`Post not found`);
         }
 
-        const totalCount = await this.postsQueryRepository.countByBlogId(command.blogId);
+        const totalCount = await this.commentsQueryRepository.countByPostId(command.postId);
         const pagesCount = Math.ceil(totalCount / +size);
 
         const skip = (page - 1) * size;
 
-        const comments = await this.postsQueryRepository
-            .findPostsByBlogIdPaginated(
+        const comments = await this.commentsQueryRepository
+            .findCommentssByPostIdPaginated(
                 command.postId,
                 sortBy,
                 sortDirection,
