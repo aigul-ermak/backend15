@@ -24,7 +24,7 @@ import {CreateLikeForPostUseCaseCommand} from "../../usecases/createLikeForPostU
 import {LikeStatusInputDto} from "../../likePost/api/model/like-status.input.dto";
 import {JwtAuthGuard} from "../../auth/jwt-auth.guard";
 import {CreateCommentForPostUseCaseCommand} from "../../usecases/createCommentForPostUseCase";
-import {CreateCommentInputDto} from "../../comments/api/model/input/create-comment.input.dto";
+import {CommentInputDto} from "../../comments/api/model/input/comment-input.dto";
 import {GetCommentsForPostUseCase, GetCommentsForPostUseCaseCommand} from "../../usecases/getCommentsForPostUseCase";
 
 
@@ -42,8 +42,9 @@ export class PostsController {
     ) {
     }
 
-    @UseGuards(BasicAuthGuard)
+
     @Post()
+    @UseGuards(BasicAuthGuard)
     async create(
         @Body()
             createPostDto: CreatePostInputDto,
@@ -53,9 +54,10 @@ export class PostsController {
         );
     }
 
-    @UseGuards(BasicAuthGuard)
+
     @Put(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async updatePost(
         @Param('id') id: string,
         @Body() updatePostDto: UpdatePostDto,
@@ -66,7 +68,7 @@ export class PostsController {
     }
 
 
-    @Put(':id/likePost-status')
+    @Put(':id/like-status')
     @HttpCode(204)
     @UseGuards(JwtAuthGuard)
     async createLikeForPost(
@@ -83,12 +85,7 @@ export class PostsController {
 
     @Get(':id')
     async getPostById(@Param('id') id: string) {
-        const post = await this.commandBus.execute(new GetPostByIdUseCaseCommand(id));
-
-        if (!post) {
-            throw new NotFoundException(`Post not found`);
-        }
-        return post;
+        return await this.commandBus.execute(new GetPostByIdUseCaseCommand(id));
     }
 
     @Post(':id/comments')
@@ -96,17 +93,13 @@ export class PostsController {
     @UseGuards(JwtAuthGuard)
     async createCommentForPost(
         @Param('id') postId: string,
-        @Body() comment: CreateCommentInputDto,
+        @Body() comment: CommentInputDto,
         @Req() req: Request,
     ) {
         const userId = req['userId'];
 
-        const post = await this.commandBus.execute(new CreateCommentForPostUseCaseCommand(postId, userId, comment));
+        return await this.commandBus.execute(new CreateCommentForPostUseCaseCommand(postId, userId, comment));
 
-        if (!post) {
-            throw new NotFoundException(`Post not found`);
-        }
-        return post;
     }
 
     @Get(':id/comments')
@@ -135,6 +128,7 @@ export class PostsController {
 
     @Delete(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async deletePost(@Param('id') id: string): Promise<void> {
 
         const result = await this.commandBus.execute(new DeletePostByIdUseCaseCommand(id));
