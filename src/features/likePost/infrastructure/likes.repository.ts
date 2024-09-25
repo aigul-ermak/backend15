@@ -24,11 +24,9 @@ export class LikesRepository {
             }
         })
         return !!res.matchedCount;
-
     }
 
     async deleteLikeStatus(parentId: string, userId: string) {
         await this.likeModel.deleteMany({parentId, userId});
     }
-
 }

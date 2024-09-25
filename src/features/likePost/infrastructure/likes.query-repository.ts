@@ -1,6 +1,5 @@
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
-
 import {Model} from "mongoose";
 import {Like, LIKE_STATUS, LikeDocument} from "../domain/like.entity";
 
@@ -11,8 +10,7 @@ export class LikesQueryRepository {
     }
 
     async getLike(parentId: string, userId: string) {
-        const res = await this.likeModel.findOne({parentId: parentId, userId: userId});
-        return res;
+        return await this.likeModel.findOne({parentId: parentId, userId: userId});
     }
 
     async getNewestLikes(parentId: string) {
@@ -22,7 +20,6 @@ export class LikesQueryRepository {
     }
 
     async checkLike({parentId, userId}: { parentId: string, userId: string }) {
-        // arguments
         const res = await this.likeModel.findOne({parentId: parentId, userId: userId}).lean();
         return !!res;
     }
