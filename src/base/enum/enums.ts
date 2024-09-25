@@ -1,5 +1,5 @@
-export enum LikeSTatusEnum {
-    'None' = 'None',
-    'Like' = 'Like',
-    'Dislike' = 'Dislike'
+export enum LIKE_STATUS {
+    LIKE = 'Like',
+    DISLIKE = 'Dislike',
+    NONE = 'None'
 }
