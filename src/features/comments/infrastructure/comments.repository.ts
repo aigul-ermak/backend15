@@ -6,11 +6,12 @@ import {CommentDocument} from "../domain/comment.entity";
 
 @Injectable()
 export class CommentsRepository {
-    constructor(@InjectModel(Comment.name) private postModel: Model<CommentDocument>) {
+    constructor(@InjectModel(Comment.name) private commentModel: Model<CommentDocument>) {
     }
 
-    async findAll() {
-
+    async createComment(newComment: any) {
+        const res = await this.commentModel.create(newComment)
+        return res._id.toString();
     }
 
 }
