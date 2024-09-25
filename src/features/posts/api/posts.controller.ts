@@ -23,7 +23,17 @@ import {DeletePostByIdUseCaseCommand} from "../../usecases/deletePostByIdUseCase
 import {CreateLikeForPostUseCaseCommand} from "../../usecases/createLikeForPostUseCase";
 import {LikeStatusInputDto} from "../../likePost/api/model/like-status.input.dto";
 import {JwtAuthGuard} from "../../auth/jwt-auth.guard";
+import {CreateCommentForPostUseCaseCommand} from "../../usecases/createCommentForPostUseCase";
+import {CreateCommentInputDto} from "../../comments/api/model/input/create-comment.input.dto";
+import {GetCommentsForPostUseCase, GetCommentsForPostUseCaseCommand} from "../../usecases/getCommentsForPostUseCase";
 
+
+class GetCommentsPostUseCaseCommand {
+    constructor(sortData: SortPostsDto) {
+
+    }
+
+}
 
 @Controller('posts')
 export class PostsController {
@@ -38,7 +48,9 @@ export class PostsController {
         @Body()
             createPostDto: CreatePostInputDto,
     ) {
-        return await this.commandBus.execute(new CreatePostUseCaseCommand(createPostDto));
+        return await this.commandBus.execute(
+            new CreatePostUseCaseCommand(createPostDto)
+        );
     }
 
     @UseGuards(BasicAuthGuard)
@@ -50,6 +62,7 @@ export class PostsController {
     ) {
 
         return await this.commandBus.execute(new UpdatePostUseCaseCommand(id, updatePostDto));
+
     }
 
 
@@ -78,10 +91,45 @@ export class PostsController {
         return post;
     }
 
+    @Post(':id/comments')
+    @HttpCode(201)
+    @UseGuards(JwtAuthGuard)
+    async createCommentForPost(
+        @Param('id') postId: string,
+        @Body() comment: CreateCommentInputDto,
+        @Req() req: Request,
+    ) {
+        const userId = req['userId'];
+
+        const post = await this.commandBus.execute(new CreateCommentForPostUseCaseCommand(postId, userId, comment));
+
+        if (!post) {
+            throw new NotFoundException(`Post not found`);
+        }
+        return post;
+    }
+
+    @Get(':id/comments')
+    @HttpCode(200)
+    // @UseGuards(JwtAuthGuard)
+    async getCommentsForPost(
+        @Param('id') postId: string,
+        @Query() sortData: SortPostsDto
+    ) {
+
+        return await this.commandBus.execute(
+            new GetCommentsForPostUseCaseCommand(postId, sortData)
+        );
+
+    }
+
+
     @Get()
     async getAllPosts(
         @Query() sortData: SortPostsDto) {
+
         return await this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData));
+
     }
 
 
