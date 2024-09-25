@@ -54,6 +54,13 @@ import {GetCommentsForPostUseCase} from "./features/usecases/getCommentsForPostU
 import {CreateCommentForPostUseCase} from "./features/usecases/createCommentForPostUseCase";
 import {CommentsRepository} from "./features/comments/infrastructure/comments.repository";
 import {CommentsQueryRepository} from "./features/comments/infrastructure/comments.query-repository";
+import {CreateLikeForCommentUseCase} from "./features/usecases/createLikeForCommentUseCase";
+import {GetCommentByIdUseCase} from "./features/usecases/getCommentByIdUseCase";
+import {DeleteCommentByIdUseCase} from "./features/usecases/deleteCommentByIdUseCase";
+import {UpdateCommentUseCase} from "./features/usecases/updateCommentUseCase";
+import {LikesCommentRepository} from "./features/likeComment/infrastructure/likes-comment.repository";
+import {LikesCommentQueryRepository} from "./features/likeComment/infrastructure/likes-comment.query-repository";
+import {LikeComment, LikesCommentEntity} from "./features/likeComment/domain/like-comment.entity";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
@@ -61,7 +68,9 @@ const blogsProviders: Provider[] = [BlogsRepository, BlogsQueryRepository, Blogs
 const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetAllBlogsUseCase,
     DeleteBlogByIdUseCase, UpdateBlogUseCase, CreatePostUseCase, GetPostByIdUseCase,
     UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase,
-    CreateLikeForPostUseCase, GetCommentsForPostUseCase, CreateCommentForPostUseCase]
+    CreateLikeForPostUseCase, GetCommentsForPostUseCase, CreateCommentForPostUseCase,
+    CreateLikeForCommentUseCase, GetCommentByIdUseCase, DeleteCommentByIdUseCase, UpdateCommentUseCase
+]
 
 @Module({
     imports: [
@@ -93,7 +102,8 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
             {name: Blog.name, schema: BlogEntity},
             {name: Post.name, schema: PostsEntity},
             {name: Like.name, schema: LikesEntity},
-            {name: Comment.name, schema: CommentsEntity}]
+            {name: Comment.name, schema: CommentsEntity},
+            {name: LikeComment.name, schema: LikesCommentEntity}]
         ),
 
         CqrsModule,
@@ -108,7 +118,8 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
         CommentsModule,
     ],
     providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, PostsService,
-        LikesRepository, LikesQueryRepository, CommentsRepository, CommentsQueryRepository, ...useCases],
+        LikesRepository, LikesQueryRepository, CommentsRepository, CommentsQueryRepository,
+        LikesCommentRepository, LikesCommentQueryRepository, ...useCases],
     controllers: [UsersController, AuthController, BlogsController, PostsController],
 })
 export class AppModule implements NestModule {
