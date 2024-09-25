@@ -20,8 +20,8 @@ export const PostCommentOutputModelMapper = (postComment: any): PostCommentOutpu
     outputModel.postId = postComment._id.toString();
     outputModel.content = postComment.content;
     outputModel.commentatorInfo = {
-        userId: postComment.userId,
-        userLogin: postComment.user.login
+        userId: postComment.commentatorInfo.userId,
+        userLogin: postComment.commentatorInfo.userLogin
     }
     outputModel.createdAt = postComment.createdAt;
 
