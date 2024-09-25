@@ -47,6 +47,11 @@ import {LikesRepository} from "./features/likePost/infrastructure/likes.reposito
 import {LikesQueryRepository} from "./features/likePost/infrastructure/likes.query-repository";
 import {LikesModule} from "./features/likePost/likes.module";
 import {Like, LikesEntity} from "./features/likePost/domain/like.entity";
+import {LikesCommentModule} from './features/likeComment/likes-comment.module';
+import {CommentsEntity} from "./features/comments/domain/comment.entity";
+import {CommentsModule} from "./features/comments/comments.module";
+import {GetCommentsForPostUseCase} from "./features/usecases/getCommentsForPostUseCase";
+import {CreateCommentForPostUseCase} from "./features/usecases/createCommentForPostUseCase";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
@@ -54,7 +59,7 @@ const blogsProviders: Provider[] = [BlogsRepository, BlogsQueryRepository, Blogs
 const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetAllBlogsUseCase,
     DeleteBlogByIdUseCase, UpdateBlogUseCase, CreatePostUseCase, GetPostByIdUseCase,
     UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase,
-    CreateLikeForPostUseCase]
+    CreateLikeForPostUseCase, GetCommentsForPostUseCase, CreateCommentForPostUseCase]
 
 @Module({
     imports: [
@@ -85,7 +90,10 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
             {name: User.name, schema: UsersEntity},
             {name: Blog.name, schema: BlogEntity},
             {name: Post.name, schema: PostsEntity},
-            {name: Like.name, schema: LikesEntity}]),
+            {name: Like.name, schema: LikesEntity},
+            {name: Comment.name, schema: CommentsEntity}]
+        ),
+
         CqrsModule,
         UsersModule,
         TestingModule,
@@ -94,6 +102,8 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
         AuthModule,
         EmailModule,
         LikesModule,
+        LikesCommentModule,
+        CommentsModule,
     ],
     providers: [...usersProviders, ...blogsProviders, AuthService, BlogsService, PostsService,
         LikesRepository, LikesQueryRepository, ...useCases],
