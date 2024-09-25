@@ -27,7 +27,7 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
 
         const blog = await this.blogsQueryRepository.getBlogById(command.post.blogId);
 
-        if (blog === null) {
+        if (!blog) {
             throw new NotFoundException(`Blog not found`);
         }
 
