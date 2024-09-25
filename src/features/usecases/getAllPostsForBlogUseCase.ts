@@ -4,6 +4,7 @@ import {SortPostsDto} from "../posts/api/models/input/sort-post.input.dto";
 import {PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
 import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-repository";
 import {NotFoundException} from "@nestjs/common";
+import {LikesQueryRepository} from "../likePost/infrastructure/likes.query-repository";
 
 
 export class GetAllPostsForBlogUseCaseCommand {
@@ -16,6 +17,7 @@ export class GetAllPostsForBlogUseCase implements ICommandHandler<GetAllPostsFor
     constructor(
         private postsQueryRepository: PostsQueryRepository,
         private blogsQueryRepository: BlogsQueryRepository,
+        private likesQueryRepository: LikesQueryRepository,
     ) {
     }
 
@@ -47,7 +49,11 @@ export class GetAllPostsForBlogUseCase implements ICommandHandler<GetAllPostsFor
                 size
             );
 
-        const mappedPosts = posts.map(PostOutputModelMapper);
+        //const mappedPosts = posts.map(PostOutputModelMapper);
+        const mappedPosts = await Promise.all(posts.map(async (post) => {
+            const newestLikes = await this.likesQueryRepository.getNewestLikesForPost(post.id);
+            return PostOutputModelMapper(post, newestLikes);
+        }));
         console.log(mappedPosts)
 
         return {
@@ -55,7 +61,7 @@ export class GetAllPostsForBlogUseCase implements ICommandHandler<GetAllPostsFor
             page: +page,
             pageSize: +size,
             totalCount: totalCount,
-            items: posts.map(PostOutputModelMapper),
+            items: mappedPosts,
         }
 
     }

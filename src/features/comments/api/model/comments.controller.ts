@@ -19,7 +19,9 @@ export class CommentsController {
 
     @Get(':id')
     async getCommentById(@Param('id') id: string) {
+
         return await this.commandBus.execute(new GetCommentByIdUseCaseCommand(id));
+
     }
 
     @Put(':id')

@@ -59,10 +59,13 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
 
             if (command.likeStatus.likeStatus == LIKE_STATUS.LIKE) {
                 await this.postsRepository.incrementLikeCount(command.postId,);
+
             } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
                 await this.postsRepository.incrementDislikeCount(command.postId,);
             }
+
             return res;
+
         } else {
 
             like = await this.likeQueryRepository.getLike(command.postId, command.userId);
@@ -71,27 +74,26 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
 
                 if (like!.status === LIKE_STATUS.LIKE) {
                     await this.postsRepository.decrementLikeCount(command.postId);
+
                 } else if (like!.status === LIKE_STATUS.DISLIKE) {
-                    await this.postsRepository.decrementDislikeCount(command.postId);
+                    await this.postsRepository.decrementLikeCount(command.postId,);
                 }
 
-                if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
-                    await this.postsRepository.incrementLikeCount(command.postId,);
-                } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
-                    await this.postsRepository.incrementDislikeCount(command.postId,);
-                }
+                this.likeRepository.deleteLikeStatus(command.postId, command.userId);
 
             } else {
                 if (like!.status === LIKE_STATUS.LIKE) {
                     await this.postsRepository.decrementLikeCount(command.postId);
+
                 } else if (like!.status === LIKE_STATUS.DISLIKE) {
+
                     await this.postsRepository.decrementDislikeCount(command.postId);
                 }
+
                 this.likeRepository.deleteLikeStatus(command.postId, command.userId);
             }
 
 
-            return await this.likeRepository.updateLike(like!._id.toString(), like);
         }
     }
 }

@@ -2,6 +2,7 @@ import {NotFoundException} from "@nestjs/common";
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
 import {PostOutputModel, PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
+import {LikesQueryRepository} from "../likePost/infrastructure/likes.query-repository";
 
 
 export class GetPostByIdUseCaseCommand {
@@ -12,7 +13,8 @@ export class GetPostByIdUseCaseCommand {
 @CommandHandler(GetPostByIdUseCaseCommand)
 export class GetPostByIdUseCase implements ICommandHandler<GetPostByIdUseCaseCommand> {
     constructor(
-        private postsQueryRepository: PostsQueryRepository
+        private postsQueryRepository: PostsQueryRepository,
+        private likesQueryRepository: LikesQueryRepository,
     ) {
     }
 
@@ -23,7 +25,9 @@ export class GetPostByIdUseCase implements ICommandHandler<GetPostByIdUseCaseCom
         if (post === null) {
             throw new NotFoundException(`Post not found`);
         }
+        const newestLikes = await this.likesQueryRepository.getNewestLikesForPost(post.id);
 
-        return PostOutputModelMapper(post);
+        return PostOutputModelMapper(post, newestLikes);
+      
     }
 }
