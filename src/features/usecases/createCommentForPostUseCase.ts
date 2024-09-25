@@ -2,7 +2,7 @@ import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {BadRequestException, NotFoundException} from "@nestjs/common";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
 import {UsersQueryRepository} from "../users/infrastructure/users.query-repository";
-import {CreateCommentInputDto} from "../comments/api/model/input/create-comment.input.dto";
+import {CommentInputDto} from "../comments/api/model/input/comment-input.dto";
 import {CommentsRepository} from "../comments/infrastructure/comments.repository";
 import {CommentsQueryRepository} from "../comments/infrastructure/comments.query-repository";
 import {CommentOutputModelMapper} from "../comments/api/model/output/comment-output.model";
@@ -11,7 +11,7 @@ import {CommentOutputModelMapper} from "../comments/api/model/output/comment-out
 export class CreateCommentForPostUseCaseCommand {
     constructor(public postId: string,
                 public userId: string,
-                public comment: CreateCommentInputDto) {
+                public comment: CommentInputDto) {
     }
 }
 
@@ -31,7 +31,7 @@ export class CreateCommentForPostUseCase implements ICommandHandler<CreateCommen
         const post = await this.postsQueryRepository.getPostById(command.postId);
         let like;
 
-        if (post === null) {
+        if (!post) {
             throw new NotFoundException(`Post not found`);
         }
 
