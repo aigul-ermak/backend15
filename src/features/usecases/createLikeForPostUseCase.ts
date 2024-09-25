@@ -16,7 +16,6 @@ export class CreateLikeForPostUseCaseCommand {
     }
 }
 
-
 @CommandHandler(CreateLikeForPostUseCaseCommand)
 export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPostUseCaseCommand> {
 
