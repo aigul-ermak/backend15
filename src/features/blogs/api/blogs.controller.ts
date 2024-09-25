@@ -37,8 +37,9 @@ export class BlogsController {
     ) {
     }
 
-    @UseGuards(BasicAuthGuard)
+
     @Post()
+    @UseGuards(BasicAuthGuard)
     async create(
         @Body()
             createBlogDto: CreateBlogInputDto,
@@ -55,9 +56,10 @@ export class BlogsController {
         return blog;
     }
 
-    @UseGuards(BasicAuthGuard)
+
     @Put(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async updateBlog(
         @Param('id') id: string,
         @Body() updateBlogDto: UpdateBlogDto,
@@ -75,6 +77,7 @@ export class BlogsController {
     }
 
     @Post(':id/posts')
+    @UseGuards(BasicAuthGuard)
     async createPostForBlog(
         @Param('id') blogId: string,
         @Body()
@@ -112,9 +115,10 @@ export class BlogsController {
         return this.queryBus.execute(new GetBlogByIdUseCaseCommand(id));
     }
 
-    @UseGuards(BasicAuthGuard)
+
     @Delete(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async deleteBlog(@Param('id') blogId: string): Promise<void> {
 
         const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(blogId));
