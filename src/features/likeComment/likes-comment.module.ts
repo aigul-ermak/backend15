@@ -11,7 +11,7 @@ import {LikeComment, LikesCommentEntity} from "./domain/like-comment.entity";
         PostsModule
     ],
     providers: [LikesCommentRepository, LikesCommentQueryRepository],
-
+    exports: [LikesCommentRepository, LikesCommentQueryRepository]
 
 })
 export class LikesCommentModule {
