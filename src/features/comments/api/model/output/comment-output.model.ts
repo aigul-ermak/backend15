@@ -13,21 +13,21 @@ export class CommentOutputModel {
     }
 }
 
-export const CommentOutputModelMapper = (postComment: any): CommentOutputModel => {
+export const CommentOutputModelMapper = (newComment: any): CommentOutputModel => {
     //TODO type?
     const outputModel = new CommentOutputModel();
 
-    outputModel.id = postComment._id.toString();
-    outputModel.content = postComment.content;
+    outputModel.id = newComment._id.toString();
+    outputModel.content = newComment.content;
     outputModel.commentatorInfo = {
-        userId: postComment.userId,
-        userLogin: postComment.user.login
+        userId: newComment.commentatorInfo.userId,
+        userLogin: newComment.commentatorInfo.userLogin
     }
-    outputModel.createdAt = postComment.createdAt;
+    outputModel.createdAt = newComment.createdAt;
 
     outputModel.likesInfo = {
-        likesCount: postComment.likesCount ?? 0,
-        dislikesCount: postComment.dislikesCount ?? 0,
+        likesCount: newComment.likesCount ?? 0,
+        dislikesCount: newComment.dislikesCount ?? 0,
         myStatus: 'None',
     }
 
