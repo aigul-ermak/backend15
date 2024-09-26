@@ -1,7 +1,7 @@
 import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-repository";
 import {SortBlogsDto} from "../blogs/api/models/input/sort-blog.input.dto";
 import {BlogOutputModelMapper} from "../blogs/api/models/output/blog.output.model";
-import {IQueryHandler, QueryHandler} from "@nestjs/cqrs";
+import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 
 
 export class GetAllBlogsUseCaseCommand {
@@ -9,8 +9,8 @@ export class GetAllBlogsUseCaseCommand {
     }
 }
 
-@QueryHandler(GetAllBlogsUseCaseCommand)
-export class GetAllBlogsUseCase implements IQueryHandler<GetAllBlogsUseCaseCommand> {
+@CommandHandler(GetAllBlogsUseCaseCommand)
+export class GetAllBlogsUseCase implements ICommandHandler<GetAllBlogsUseCaseCommand> {
     constructor(private blogsQueryRepository: BlogsQueryRepository) {
     }
 
