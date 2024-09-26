@@ -1,12 +1,15 @@
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
 import {SortPostsDto} from "../posts/api/models/input/sort-post.input.dto";
-import {PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
+import {PostsOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
 import {LikesQueryRepository} from "../likePost/infrastructure/likes.query-repository";
 
 
 export class GetAllPostsUseCaseCommand {
-    constructor(public sortData: SortPostsDto) {
+    constructor(
+        public sortData: SortPostsDto,
+        public userId: string,
+    ) {
     }
 }
 
@@ -31,14 +34,14 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsUseCaseCom
         const totalCount = await this.postsQueryRepository.countDocuments();
 
         const pageCount = Math.ceil(totalCount / pageSize);
-        // console.log("posts", posts)
-        // const mappedPosts = posts.map(PostOutputModelMapper);
+
         const mappedPosts = await Promise.all(posts.map(async (post) => {
-            const newestLikes = await this.likesQueryRepository.getNewestLikesForPost(post._id.toString());
-            console.log(newestLikes)
-            return PostOutputModelMapper(post, newestLikes);
+            const postId = post._id.toString()
+            const newestLikes = await this.likesQueryRepository.getNewestLikesForPost(postId);
+            const postLike = await this.likesQueryRepository.getLike(postId, command.userId);
+            const status = postLike ? postLike.status : 'None';
+            return PostsOutputModelMapper(post, newestLikes, status);
         }));
-        //console.log(mappedPosts)
 
         return {
             pagesCount: pageCount,
