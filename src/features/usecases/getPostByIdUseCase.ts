@@ -1,12 +1,18 @@
 import {NotFoundException} from "@nestjs/common";
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
-import {PostOutputModel, PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
+import {
+    PostOutputModel,
+    PostsOutputModelMapper
+} from "../posts/api/models/output/post-db.output.model";
 import {LikesQueryRepository} from "../likePost/infrastructure/likes.query-repository";
 
 
 export class GetPostByIdUseCaseCommand {
-    constructor(public id: string) {
+    constructor(
+        public id: string,
+        public userId: string | null
+    ) {
     }
 }
 
@@ -18,16 +24,24 @@ export class GetPostByIdUseCase implements ICommandHandler<GetPostByIdUseCaseCom
     ) {
     }
 
-    async execute(query: GetPostByIdUseCaseCommand): Promise<PostOutputModel | null> {
+    async execute(command: GetPostByIdUseCaseCommand): Promise<PostOutputModel | null> {
 
-        const post = await this.postsQueryRepository.getPostById(query.id);
+        const post = await this.postsQueryRepository.getPostById(command.id);
 
         if (post === null) {
             throw new NotFoundException(`Post not found`);
         }
         const newestLikes = await this.likesQueryRepository.getNewestLikesForPost(post.id);
 
-        return PostOutputModelMapper(post, newestLikes);
-      
+        let status = 'None';
+
+        if (command.userId) {
+            const postLike = await this.likesQueryRepository.getLike(command.id, command.userId);
+            status = postLike ? postLike.status : 'None';
+        }
+       
+
+        return PostsOutputModelMapper(post, newestLikes, status);
+
     }
 }
