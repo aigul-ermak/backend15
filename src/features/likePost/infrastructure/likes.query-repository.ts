@@ -10,7 +10,7 @@ export class LikesQueryRepository {
     }
 
     async getLike(parentId: string, userId: string) {
-        return await this.likeModel.findOne({parentId: parentId, userId: userId});
+        return this.likeModel.findOne({parentId: parentId, userId: userId});
     }
 
     async getNewestLikesForPost(postId: string) {
@@ -19,7 +19,7 @@ export class LikesQueryRepository {
         //     .limit(3);
         const newestLikes = await this.likeModel.find({parentId: postId, status: LIKE_STATUS.LIKE})
             .sort({createdAt: -1})
-            .limit(3)
+            .limit(10)
             .lean();
 
         return newestLikes.map(like => ({
