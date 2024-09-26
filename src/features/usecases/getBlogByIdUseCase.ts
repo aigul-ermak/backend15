@@ -1,7 +1,7 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import {BlogOutputModel, BlogOutputModelMapper} from "../blogs/api/models/output/blog.output.model";
 import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-repository";
-import {IQueryHandler, QueryHandler} from "@nestjs/cqrs";
+import {CommandHandler, ICommandHandler, IQueryHandler, QueryHandler} from "@nestjs/cqrs";
 
 
 export class GetBlogByIdUseCaseCommand {
@@ -9,14 +9,16 @@ export class GetBlogByIdUseCaseCommand {
     }
 }
 
-@QueryHandler(GetBlogByIdUseCaseCommand)
-export class GetBlogByIdUseCase implements IQueryHandler<GetBlogByIdUseCaseCommand> {
+@CommandHandler(GetBlogByIdUseCaseCommand)
+export class GetBlogByIdUseCase implements ICommandHandler<GetBlogByIdUseCaseCommand> {
     constructor(private blogsQueryRepository: BlogsQueryRepository) {
     }
 
-    async execute(query: GetBlogByIdUseCaseCommand): Promise<BlogOutputModel | null> {
+    async execute(command: GetBlogByIdUseCaseCommand): Promise<BlogOutputModel | null> {
 
-        const blog = await this.blogsQueryRepository.getBlogById(query.id);
+        const blog = await this.blogsQueryRepository.getBlogById(command.id);
+
+        console.log(command.id)
 
         if (blog === null) {
             throw new NotFoundException(`Blog not found`);
