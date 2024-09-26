@@ -11,7 +11,7 @@ import {
     Query, Req, UseGuards,
 } from '@nestjs/common';
 import {Request} from 'express';
-import {CreatePostInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
+import {CreatePostForBlogInputDto, UpdatePostDto} from './models/input/create-post.input.dto';
 import {CommandBus} from "@nestjs/cqrs";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
@@ -48,7 +48,7 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     async create(
         @Body()
-            createPostDto: CreatePostInputDto,
+            createPostDto: CreatePostForBlogInputDto,
     ) {
         return await this.commandBus.execute(
             new CreatePostUseCaseCommand(createPostDto)
@@ -115,7 +115,6 @@ export class PostsController {
         @Param('id') postId: string,
         @Query() sortData: SortPostsDto
     ) {
-
         return await this.commandBus.execute(
             new GetCommentsForPostUseCaseCommand(postId, sortData)
         );
