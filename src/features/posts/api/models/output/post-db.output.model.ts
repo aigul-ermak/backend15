@@ -34,19 +34,37 @@ export const PostOutputModelMapper = (post: PostDocument, newestLikes: any[]): P
     outputModel.extendedLikesInfo = {
         likesCount: post.likesCount ?? 0,
         dislikesCount: post.dislikesCount ?? 0,
-        myStatus: 'None',
+        myStatus: "",
         newestLikes: newestLikes.map(like => ({
             addedAt: like.addedAt,
             userId: like.userId,
             login: like.login
         }))
-        // newestLikes: [
-        //     {
-        //         addedAt: "",
-        //         userId: 'string',
-        //         login: 'string'
-        //     }
-        // ],
+    }
+
+    return outputModel;
+}
+
+export const PostsOutputModelMapper = (post: PostDocument, newestLikes: any[], status: string): PostOutputModel => {
+    const outputModel = new PostOutputModel();
+
+    outputModel.id = post._id.toString();
+    outputModel.title = post.title;
+    outputModel.shortDescription = post.shortDescription;
+    outputModel.content = post.content;
+    outputModel.blogId = post.blogId;
+    outputModel.blogName = post.blogName;
+    outputModel.createdAt = post.createdAt;
+
+    outputModel.extendedLikesInfo = {
+        likesCount: post.likesCount ?? 0,
+        dislikesCount: post.dislikesCount ?? 0,
+        myStatus: status,
+        newestLikes: newestLikes.map(like => ({
+            addedAt: like.addedAt,
+            userId: like.userId,
+            login: like.login
+        }))
     }
 
     return outputModel;
