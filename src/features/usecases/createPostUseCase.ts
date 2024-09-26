@@ -2,15 +2,15 @@ import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {PostsRepository} from "../posts/infrastructure/posts.repository";
 import {BlogsQueryRepository} from "../blogs/infrastructure/blogs.query-repository";
 import {NotFoundException} from "@nestjs/common";
-import {CreatePostInputDto} from "../posts/api/models/input/create-post.input.dto";
+import {CreatePostForBlogInputDto} from "../posts/api/models/input/create-post.input.dto";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
-import {PostOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
+import {PostsOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
 import {LikesQueryRepository} from "../likePost/infrastructure/likes.query-repository";
 
 
 export class CreatePostUseCaseCommand {
 
-    constructor(public post: CreatePostInputDto) {
+    constructor(public post: CreatePostForBlogInputDto) {
     }
 }
 
@@ -26,9 +26,10 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
     }
 
     async execute(command: CreatePostUseCaseCommand) {
-
+        console.log(command.post.blogId)
 
         const blog = await this.blogsQueryRepository.getBlogById(command.post.blogId);
+        console.log(command.post.blogId)
 
         if (!blog) {
             throw new NotFoundException(`Blog not found`);
@@ -45,11 +46,13 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
         const post = await this.postsQueryRepository.getPostById(createdPost.id);
 
         if (post === null) {
-            throw new NotFoundException(`Blog not found`);
+            throw new NotFoundException(`Post not found`);
         }
 
         const newestLikes = await this.likesQueryRepository.getNewestLikesForPost(post.id);
 
-        return PostOutputModelMapper(post, newestLikes);
+        const status = 'None';
+
+        return PostsOutputModelMapper(post, newestLikes, status);
     }
 }
