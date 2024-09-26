@@ -25,7 +25,8 @@ import {LikeStatusInputDto} from "../../likePost/api/model/like-status.input.dto
 import {JwtAuthGuard} from "../../auth/jwt-auth.guard";
 import {CreateCommentForPostUseCaseCommand} from "../../usecases/createCommentForPostUseCase";
 import {CommentInputDto} from "../../comments/api/model/input/comment-input.dto";
-import {GetCommentsForPostUseCase, GetCommentsForPostUseCaseCommand} from "../../usecases/getCommentsForPostUseCase";
+import {GetCommentsForPostUseCaseCommand} from "../../usecases/getCommentsForPostUseCase";
+import {JwtAuthNullableGuard} from "../../auth/infrastucture/jwt-auth-nullable.guard";
 
 
 class GetCommentsPostUseCaseCommand {
@@ -84,8 +85,13 @@ export class PostsController {
 
 
     @Get(':id')
-    async getPostById(@Param('id') id: string) {
-        return await this.commandBus.execute(new GetPostByIdUseCaseCommand(id));
+    @UseGuards(JwtAuthNullableGuard)
+    async getPostById(
+        @Param('id') id: string,
+        @Req() req: Request) {
+        const userId = req['userId'];
+
+        return await this.commandBus.execute(new GetPostByIdUseCaseCommand(id, userId));
     }
 
     @Post(':id/comments')
@@ -118,10 +124,14 @@ export class PostsController {
 
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getAllPosts(
-        @Query() sortData: SortPostsDto) {
+        @Query() sortData: SortPostsDto,
+        @Req() req: Request,) {
 
-        return await this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData));
+        const userId = req['userId'];
+
+        return await this.commandBus.execute(new GetAllPostsUseCaseCommand(sortData, userId));
 
     }
 
