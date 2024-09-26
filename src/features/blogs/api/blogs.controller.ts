@@ -21,7 +21,7 @@ import {BasicAuthGuard} from "../../auth/basic-auth.guard";
 import {SortBlogsDto} from "./models/input/sort-blog.input.dto";
 import {GetAllBlogsUseCaseCommand} from "../../usecases/getAllBlogsUseCase";
 import {DeleteBlogByIdUseCaseCommand} from "../../usecases/deleteBlogByIdUseCase";
-import {CommandBus, QueryBus} from "@nestjs/cqrs";
+import {CommandBus} from "@nestjs/cqrs";
 import {UpdateBlogUseCaseCommand} from "../../usecases/updateBlogUseCase";
 import {UpdateBlogDto} from "./models/input/update-blog.input.dto";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
@@ -33,7 +33,6 @@ export class BlogsController {
 
     constructor(
         private commandBus: CommandBus,
-        private queryBus: QueryBus,
     ) {
     }
 
@@ -47,7 +46,7 @@ export class BlogsController {
 
         const newBlogId = await this.commandBus.execute(new CreateBlogUseCaseCommand(createBlogDto))
 
-        const blog: BlogOutputModel | null = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(newBlogId));
+        const blog: BlogOutputModel | null = await this.commandBus.execute(new GetBlogByIdUseCaseCommand(newBlogId));
 
         if (!blog) {
             throw new NotFoundException('Blog not found');
@@ -65,7 +64,7 @@ export class BlogsController {
         @Body() updateBlogDto: UpdateBlogDto,
     ) {
 
-        const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(id));
+        const blog = await this.commandBus.execute(new GetBlogByIdUseCaseCommand(id));
 
         if (!blog) {
 
@@ -96,7 +95,7 @@ export class BlogsController {
     @Get()
     async getAllBlogs(
         @Query() sortData: SortBlogsDto) {
-        return this.queryBus.execute(new GetAllBlogsUseCaseCommand(sortData))
+        return this.commandBus.execute(new GetAllBlogsUseCaseCommand(sortData))
     }
 
     @Get(':id/posts')
@@ -112,7 +111,7 @@ export class BlogsController {
 
     @Get(':id')
     async getBlogById(@Param('id') id: string) {
-        return this.queryBus.execute(new GetBlogByIdUseCaseCommand(id));
+        return this.commandBus.execute(new GetBlogByIdUseCaseCommand(id));
     }
 
 
@@ -121,7 +120,7 @@ export class BlogsController {
     @UseGuards(BasicAuthGuard)
     async deleteBlog(@Param('id') blogId: string): Promise<void> {
 
-        const blog = await this.queryBus.execute(new GetBlogByIdUseCaseCommand(blogId));
+        const blog = await this.commandBus.execute(new GetBlogByIdUseCaseCommand(blogId));
 
         if (!blog) {
             throw new NotFoundException('Blog not found');
