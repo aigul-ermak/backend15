@@ -92,8 +92,6 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
 
                 this.likeRepository.deleteLikeStatus(command.postId, command.userId);
             }
-
-
         }
     }
 }
