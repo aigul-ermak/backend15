@@ -31,9 +31,9 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
     async execute(command: CreateLikeForPostUseCaseCommand) {
 
         const post = await this.postsQueryRepository.getPostById(command.postId);
-        // let like;
 
-        if (post === null) {
+
+        if (!post) {
             throw new NotFoundException(`Post not found`);
         }
 
@@ -58,7 +58,7 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
             const res = await this.likesRepository.createLike(newLike);
 
             if (command.likeStatus.likeStatus == LIKE_STATUS.LIKE) {
-                await this.postsRepository.incrementLikeCount(command.postId,);
+                await this.postsRepository.incrementLikeCount(command.postId);
 
             } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
                 await this.postsRepository.incrementDislikeCount(command.postId,);
