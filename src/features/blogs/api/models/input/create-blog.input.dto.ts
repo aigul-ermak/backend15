@@ -9,10 +9,10 @@ export class CreateBlogInputDto {
 
     @IsString()
     @Trim()
-    @Length(1, 500, {message: "Length not correct"})
+    @Length(1, 500, {message: "Description not correct"})
     description: string;
 
-    @Length(1, 100, {message: "Length not correct"})
+    @Length(1, 100, {message: "WebsiteUrl not correct"})
     @Matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/, {
         message: "Invalid URL format. The URL must start with https://",
     })
@@ -27,12 +27,12 @@ export class CreatePostToBlogDto {
 
     @IsString()
     @Trim()
-    @Length(1, 100, {message: "Length not correct"})
+    @Length(1, 100, {message: "ShortDescription not correct"})
     shortDescription: string;
 
     @IsString()
     @Trim()
-    @Length(1, 1000, {message: "Length not correct"})
+    @Length(1, 1000, {message: "Content not correct"})
     content: string;
 }
 
