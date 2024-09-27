@@ -1,4 +1,4 @@
-import {IsString, IsUUID, Length} from "class-validator";
+import {IsMongoId, IsString, IsUUID, Length} from "class-validator";
 import {Trim} from "../../../../../infrastructure/decorators/transform/trim";
 import {ValidateBlogExists} from "../../../../../infrastructure/decorators/validate/blog-is-exist.decorator";
 
@@ -40,9 +40,10 @@ export class CreatePostForBlogInputDto {
     @Length(1, 1000, {message: "Length not correct"})
     content: string;
 
-    @IsString()
-    @Trim()
-        //@ValidateBlogExists({message: "Blog not correct"})
+    // @IsString()
+    // @Trim()
+    //@ValidateBlogExists({message: "Blog not correct"})
+    @IsMongoId({message: 'Invalid MongoDB ObjectId.'})
     blogId: string;
 }
 
