@@ -61,7 +61,7 @@ export class PostsController {
     @UseGuards(BasicAuthGuard)
     async updatePost(
         @Param('id') id: string,
-        @Body() updatePostDto: UpdatePostDto,
+        @Body() updatePostDto: CreatePostForBlogInputDto,
     ) {
 
         return await this.commandBus.execute(new UpdatePostUseCaseCommand(id, updatePostDto));
