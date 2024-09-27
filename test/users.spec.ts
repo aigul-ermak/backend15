@@ -1,11 +1,10 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
-// import request from 'supertest';
+
 const request = require('supertest');
 import {AppModule} from './../src/app.module';
 import {applyAppSettings} from "../src/settings/apply.app.setting";
-import {ExtractJwt} from "passport-jwt";
-import fromHeader = ExtractJwt.fromHeader;
+
 
 const HTTP_BASIC_USER = process.env.HTTP_BASIC_USER as string;
 const HTTP_BASIC_PASS = process.env.HTTP_BASIC_PASS as string;
@@ -22,7 +21,7 @@ describe('Users testing', () => {
     let newUser1;
     let newUser2;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         }).compile();
@@ -34,13 +33,16 @@ describe('Users testing', () => {
 
         httpServer = app.getHttpServer();
 
-        await request(httpServer)
-            .delete('/testing/all-data')
-            .expect(204);
     });
 
     afterAll(async () => {
+
+        await request(httpServer)
+            .delete('/testing/all-data')
+            .expect(204);
+
         await app.close();
+
     });
 
     it('Get all users before create users', async () => {

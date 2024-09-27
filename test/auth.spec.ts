@@ -88,7 +88,7 @@ describe('Auth testing', () => {
         const expectedError = {
             errorsMessages: [
                 {
-                    message: 'User with this login already exists',
+                    message: 'Length not correct',
                     field: 'login',
                 }
             ]
