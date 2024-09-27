@@ -31,7 +31,6 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
     async execute(command: CreateLikeForCommentUseCaseCommand) {
 
         const comment = await this.commentsQueryRepository.getCommentById(command.commentId);
-        let like;
 
         if (!comment) {
             throw new NotFoundException(`Comment not found`);
@@ -61,39 +60,50 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
             const res = await this.likeCommentRepository.createLike(newLike);
 
             if (command.likeStatus.likeStatus == LIKE_STATUS.LIKE) {
-                await this.commentsRepository.incrementLikeCount(command.commentId,);
+                await this.commentsRepository.incrementLikeCount(command.commentId);
             } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
                 await this.commentsRepository.incrementDislikeCount(command.commentId,);
             }
             return res;
         } else {
 
-            like = await this.likeCommentQueryRepository.getLike(command.commentId, command.userId);
+            const currentLike = await this.likeCommentQueryRepository.getLike(command.commentId, command.userId);
 
-            if (like!.status !== command.likeStatus.likeStatus) {
+            if (command.likeStatus.likeStatus === LIKE_STATUS.NONE) {
+                await this.commentsRepository.deleteLikeStatus(command.commentId, command.userId);
 
-                if (like!.status === LIKE_STATUS.LIKE) {
-                    await this.commentsRepository.decrementLikeCount(command.commentId);
-                } else if (like!.status === LIKE_STATUS.DISLIKE) {
-                    await this.commentsRepository.decrementDislikeCount(command.commentId);
-                }
+                const updatedLikesInfo = {
+                    likesCount: 0,
+                    dislikesCount: 0,
+                };
 
-                if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
-                    await this.commentsRepository.incrementLikeCount(command.commentId,);
-                } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
-                    await this.commentsRepository.incrementDislikeCount(command.commentId,);
-                }
-
-            } else {
-                if (like!.status === LIKE_STATUS.LIKE) {
-                    await this.commentsRepository.decrementLikeCount(command.commentId);
-                } else if (like!.status === LIKE_STATUS.DISLIKE) {
-                    await this.commentsRepository.decrementDislikeCount(command.commentId);
-                }
-                this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
+                await this.commentsRepository.updatePostLikesCount(command.commentId, updatedLikesInfo)
             }
 
-            return await this.likeCommentRepository.updateLike(like!._id.toString(), like);
+            if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
+                if (currentLike!.status === LIKE_STATUS.LIKE) {
+                    await this.commentsRepository.decrementLikeCount(command.commentId);
+                    await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
+
+                } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
+                    await this.commentsRepository.incrementLikeCount(command.commentId);
+                    await this.commentsRepository.decrementDislikeCount(command.commentId);
+                    await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.LIKE});
+                }
+            }
+
+            if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
+                if (currentLike!.status === LIKE_STATUS.LIKE) {
+                    await this.commentsRepository.decrementLikeCount(command.commentId);
+                    await this.commentsRepository.incrementDislikeCount(command.commentId);
+                    await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.DISLIKE});
+
+                } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
+                    await this.commentsRepository.decrementDislikeCount(command.commentId);
+                    await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
+                }
+            }
+          
         }
     }
 }
