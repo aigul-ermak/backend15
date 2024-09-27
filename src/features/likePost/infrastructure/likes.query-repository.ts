@@ -19,7 +19,7 @@ export class LikesQueryRepository {
         //     .limit(3);
         const newestLikes = await this.likeModel.find({parentId: postId, status: LIKE_STATUS.LIKE})
             .sort({createdAt: -1})
-            .limit(10)
+            .limit(3)
             .lean();
 
         return newestLikes.map(like => ({
