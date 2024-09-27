@@ -18,9 +18,8 @@ export class GetBlogByIdUseCase implements ICommandHandler<GetBlogByIdUseCaseCom
 
         const blog = await this.blogsQueryRepository.getBlogById(command.id);
 
-        console.log(command.id)
 
-        if (blog === null) {
+        if (!blog) {
             throw new NotFoundException(`Blog not found`);
         }
 
