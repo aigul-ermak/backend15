@@ -83,8 +83,9 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
 
             if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
                 if (currentLike!.status === LIKE_STATUS.LIKE) {
-                    await this.postsRepository.decrementLikeCount(command.postId);
-                    await this.likesRepository.deleteLikeStatus(command.postId, command.userId);
+                    return;
+                    // await this.postsRepository.decrementLikeCount(command.postId);
+                    // await this.likesRepository.deleteLikeStatus(command.postId, command.userId);
 
                 } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
                     await this.postsRepository.incrementLikeCount(command.postId);
@@ -100,8 +101,9 @@ export class CreateLikeForPostUseCase implements ICommandHandler<CreateLikeForPo
                     await this.likesRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.DISLIKE});
 
                 } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
-                    await this.postsRepository.decrementDislikeCount(command.postId);
-                    await this.likesRepository.deleteLikeStatus(command.postId, command.userId);
+                    // await this.postsRepository.decrementDislikeCount(command.postId);
+                    // await this.likesRepository.deleteLikeStatus(command.postId, command.userId);
+                    return;
                 }
             }
 
