@@ -11,9 +11,9 @@ import {
     Query, UseGuards,
 } from '@nestjs/common';
 import {
-    CreateBlogInputDto,
+    BlogInputDto,
     CreatePostToBlogDto,
-} from './models/input/create-blog.input.dto';
+} from './models/input/blog-input.dto';
 import {CreateBlogUseCaseCommand} from "../../usecases/createBlogUseCase";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {BlogOutputModel} from "./models/output/blog.output.model";
@@ -23,7 +23,6 @@ import {GetAllBlogsUseCaseCommand} from "../../usecases/getAllBlogsUseCase";
 import {DeleteBlogByIdUseCaseCommand} from "../../usecases/deleteBlogByIdUseCase";
 import {CommandBus} from "@nestjs/cqrs";
 import {UpdateBlogUseCaseCommand} from "../../usecases/updateBlogUseCase";
-import {UpdateBlogDto} from "./models/input/update-blog.input.dto";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {SortPostsDto} from "../../posts/api/models/input/sort-post.input.dto";
 import {GetAllPostsForBlogUseCaseCommand} from "../../usecases/getAllPostsForBlogUseCase";
@@ -41,7 +40,7 @@ export class BlogsController {
     @UseGuards(BasicAuthGuard)
     async create(
         @Body()
-            createBlogDto: CreateBlogInputDto,
+            createBlogDto: BlogInputDto,
     ): Promise<BlogOutputModel> {
 
         const newBlogId = await this.commandBus.execute(new CreateBlogUseCaseCommand(createBlogDto))
@@ -61,15 +60,8 @@ export class BlogsController {
     @UseGuards(BasicAuthGuard)
     async updateBlog(
         @Param('id') id: string,
-        @Body() updateBlogDto: UpdateBlogDto,
+        @Body() updateBlogDto: BlogInputDto,
     ) {
-
-        const blog = await this.commandBus.execute(new GetBlogByIdUseCaseCommand(id));
-
-        if (!blog) {
-
-            throw new NotFoundException(`Blog with not found`);
-        }
 
         return this.commandBus.execute(new UpdateBlogUseCaseCommand(id, updateBlogDto));
 
@@ -95,7 +87,8 @@ export class BlogsController {
     @Get()
     async getAllBlogs(
         @Query() sortData: SortBlogsDto) {
-        return this.commandBus.execute(new GetAllBlogsUseCaseCommand(sortData))
+
+        return this.commandBus.execute(new GetAllBlogsUseCaseCommand(sortData));
     }
 
     @Get(':id/posts')
@@ -120,18 +113,9 @@ export class BlogsController {
     @UseGuards(BasicAuthGuard)
     async deleteBlog(@Param('id') blogId: string): Promise<void> {
 
-        const blog = await this.commandBus.execute(new GetBlogByIdUseCaseCommand(blogId));
-
-        if (!blog) {
-            throw new NotFoundException('Blog not found');
-        }
-
-        const result = this.commandBus.execute(
+        return this.commandBus.execute(
             new DeleteBlogByIdUseCaseCommand(blogId)
         );
 
-        if (!result) {
-            throw new NotFoundException(`Blog with id not found`);
-        }
     }
 }
