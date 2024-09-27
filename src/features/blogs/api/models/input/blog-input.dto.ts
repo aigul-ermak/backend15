@@ -1,7 +1,7 @@
 import {IsString, Length, Matches} from "class-validator";
 import {Trim} from "../../../../../infrastructure/decorators/transform/trim";
 
-export class CreateBlogInputDto {
+export class BlogInputDto {
     @IsString()
     @Trim()
     @Length(1, 15, {message: "Length not correct"})
