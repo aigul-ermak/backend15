@@ -8,7 +8,7 @@ import {
     Param,
     Post,
     Put,
-    Query, UseGuards,
+    Query, Req, UseGuards,
 } from '@nestjs/common';
 import {
     BlogInputDto,
@@ -26,6 +26,8 @@ import {UpdateBlogUseCaseCommand} from "../../usecases/updateBlogUseCase";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {SortPostsDto} from "../../posts/api/models/input/sort-post.input.dto";
 import {GetAllPostsForBlogUseCaseCommand} from "../../usecases/getAllPostsForBlogUseCase";
+import {JwtAuthNullableGuard} from "../../auth/infrastucture/jwt-auth-nullable.guard";
+import {Request} from "express";
 
 @Controller('blogs')
 export class BlogsController {
@@ -92,12 +94,15 @@ export class BlogsController {
     }
 
     @Get(':id/posts')
+    @UseGuards(JwtAuthNullableGuard)
     async getPostsForBlog(
         @Param('id') blogId: string,
         @Query() sortData: SortPostsDto,
+        @Req() req: Request
     ) {
+        const userId = req['userId'];
 
-        return await this.commandBus.execute(new GetAllPostsForBlogUseCaseCommand(blogId, sortData));
+        return await this.commandBus.execute(new GetAllPostsForBlogUseCaseCommand(blogId, sortData, userId));
 
 
     }
