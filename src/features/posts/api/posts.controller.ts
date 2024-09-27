@@ -123,7 +123,8 @@ export class PostsController {
 
 
     @Get()
-    @UseGuards(JwtAuthGuard)
+    //@UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthNullableGuard)
     async getAllPosts(
         @Query() sortData: SortPostsDto,
         @Req() req: Request,) {
