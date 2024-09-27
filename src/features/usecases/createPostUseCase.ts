@@ -26,10 +26,8 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostUseCaseComma
     }
 
     async execute(command: CreatePostUseCaseCommand) {
-        console.log(command.post.blogId)
 
         const blog = await this.blogsQueryRepository.getBlogById(command.post.blogId);
-        console.log(command.post.blogId)
 
         if (!blog) {
             throw new NotFoundException(`Blog not found`);
