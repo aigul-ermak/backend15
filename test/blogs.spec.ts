@@ -300,25 +300,6 @@ describe('Blogs testing', () => {
         });
     });
 
-    it('returns 204 for delete blog', async () => {
-
-        const blogId = blog.id;
-
-        const response = await request(httpServer)
-            .delete(`/blogs/${blogId}`)
-            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
-            .expect(204);
-    });
-
-    it('returns 201 for delete blog: unauthorised user', async () => {
-
-        const blogId = blog.id;
-
-        const response = await request(httpServer)
-            .delete(`/blogs/${blogId}`)
-            .expect(401);
-    });
-
 
     it('returns 200 for get all blogs', async () => {
 
@@ -372,6 +353,25 @@ describe('Blogs testing', () => {
     //     expect(response.body).toEqual(expectedResponse);
     // });
     //
+
+    it('returns 204 for delete blog', async () => {
+
+        const blogId = blog.id;
+
+        const response = await request(httpServer)
+            .delete(`/blogs/${blogId}`)
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .expect(204);
+    });
+
+    it('returns 201 for delete blog: unauthorised user', async () => {
+
+        const blogId = blog.id;
+
+        const response = await request(httpServer)
+            .delete(`/blogs/${blogId}`)
+            .expect(401);
+    });
     it('returns 404 for delete blog: Not found', async () => {
 
         const blogId = '66f6a26adc4b81ea41af73f8';
