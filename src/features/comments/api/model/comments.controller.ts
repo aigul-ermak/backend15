@@ -9,6 +9,7 @@ import {UpdateCommentUseCaseCommand} from "../../../usecases/updateCommentUseCas
 import {DeleteCommentByIdUseCaseCommand} from "../../../usecases/deleteCommentByIdUseCase";
 import {CreateLikeForCommentUseCaseCommand} from "../../../usecases/createLikeForCommentUseCase";
 import {GetCommentByIdUseCaseCommand} from "../../../usecases/getCommentByIdUseCase";
+import {JwtAuthNullableGuard} from "../../../auth/infrastucture/jwt-auth-nullable.guard";
 
 @Controller('comments')
 export class CommentsController {
@@ -18,9 +19,13 @@ export class CommentsController {
     }
 
     @Get(':id')
-    async getCommentById(@Param('id') id: string) {
+    @UseGuards(JwtAuthNullableGuard)
+    async getCommentById(@Param('id') id: string,
+                         @Req() req: Request) {
 
-        return await this.commandBus.execute(new GetCommentByIdUseCaseCommand(id));
+        const userId = req['userId'];
+
+        return await this.commandBus.execute(new GetCommentByIdUseCaseCommand(id, userId));
 
     }
 
