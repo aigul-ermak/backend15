@@ -1,12 +1,12 @@
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {NotFoundException} from "@nestjs/common";
-import {UpdatePostDto} from "../posts/api/models/input/create-post.input.dto";
+import {CreatePostForBlogInputDto} from "../posts/api/models/input/create-post.input.dto";
 import {PostsRepository} from "../posts/infrastructure/posts.repository";
 import {PostsQueryRepository} from "../posts/infrastructure/posts.query-repository";
 
 
 export class UpdatePostUseCaseCommand {
-    constructor(public id: string, public updatePostDto: UpdatePostDto) {
+    constructor(public id: string, public updatePostDto: CreatePostForBlogInputDto) {
     }
 }
 
