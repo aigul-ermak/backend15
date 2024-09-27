@@ -3,6 +3,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Comment, CommentDocument} from "../domain/comment.entity";
 import {CommentInputDto} from "../api/model/input/comment-input.dto";
+import {UpdatePostLikesCountDto} from "../../posts/api/models/input/create-postLikesCount.input.dto";
 
 
 @Injectable()
@@ -12,8 +13,6 @@ export class CommentsRepository {
 
     //TODO type
     async createComment(newComment: any) {
-        // const res = await this.commentModel.insertMany(newComment);
-        // return res[0];
         const res = await this.commentModel.create(newComment)
         return res._id.toString();
     }
@@ -24,9 +23,19 @@ export class CommentsRepository {
             .exec();
     }
 
+    async updatePostLikesCount(id: string, updatePostLikesCountDto: UpdatePostLikesCountDto) {
+        return this.commentModel
+            .findByIdAndUpdate(id, updatePostLikesCountDto, {new: true})
+            .exec();
+    }
+
     async deleteComment(id: string) {
         const result = await this.commentModel.findByIdAndDelete(id).exec();
         return result !== null;
+    }
+
+    async deleteLikeStatus(parentId: string, userId: string) {
+        await this.commentModel.deleteMany({parentId, userId});
     }
 
     async incrementLikeCount(id: string) {
