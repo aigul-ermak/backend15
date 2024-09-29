@@ -4,12 +4,16 @@ import {PostsQueryRepository} from "../posts/infrastructure/posts.query-reposito
 import {CommentsQueryRepository} from "../comments/infrastructure/comments.query-repository";
 import {SortPostsDto} from "../posts/api/models/input/sort-post.input.dto";
 import {CommentOutputModelMapper} from "../comments/api/model/output/comment-output.model";
+import {PostsOutputModelMapper} from "../posts/api/models/output/post-db.output.model";
+import {LikesCommentQueryRepository} from "../likeComment/infrastructure/likes-comment.query-repository";
+import {PostCommentOutputModelMapper} from "../posts/api/models/output/post-comment.output.model";
 
 
 export class GetCommentsForPostUseCaseCommand {
     constructor(
         public postId: string,
-        public sortData: SortPostsDto) {
+        public sortData: SortPostsDto,
+        public userId: string) {
     }
 }
 
@@ -18,6 +22,7 @@ export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsFor
     constructor(
         private postsQueryRepository: PostsQueryRepository,
         private commentsQueryRepository: CommentsQueryRepository,
+        private likesCommentQueryRepository: LikesCommentQueryRepository
     ) {
     }
 
@@ -30,7 +35,7 @@ export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsFor
 
         const post = await this.postsQueryRepository.getPostById(command.postId);
 
-        if (post === null) {
+        if (!post) {
             throw new NotFoundException(`Post not found`);
         }
 
@@ -47,15 +52,29 @@ export class GetCommentsForPostUseCase implements ICommandHandler<GetCommentsFor
                 (page - 1) * size,
                 size
             );
+        let status;
 
-        //const mappedComments = comments.map(PostOutputModelMapper);
+
+        const mappedComments = await Promise.all(comments.map(async (comment) => {
+            const commentId = comment._id.toString()
+            console.log(comment)
+            let commentLike;
+
+            if (command.userId) {
+                commentLike = await this.likesCommentQueryRepository.getLike(commentId, command.userId);
+            }
+
+            status = commentLike ? commentLike.status : 'None';
+
+            return PostCommentOutputModelMapper(comment, status);
+        }));
 
         return {
             pagesCount: pagesCount,
             page: +page,
             pageSize: +size,
             totalCount: totalCount,
-            items: comments.map(CommentOutputModelMapper),
+            items: mappedComments
         }
     }
 }
