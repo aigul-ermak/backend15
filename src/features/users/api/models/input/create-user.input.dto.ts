@@ -1,6 +1,6 @@
 import {Trim} from "../../../../../infrastructure/decorators/transform/trim";
 import {IsString, Length, Matches} from "class-validator";
-import {IsOptionalEmail} from "../../../../../infrastructure/decorators/validate/is-optional-email";
+import {IsOptionalEmail} from "../../../../../infrastructure/decorators/validation/is-optional-email";
 
 
 export class CreateUserDto {
