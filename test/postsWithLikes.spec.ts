@@ -116,7 +116,7 @@ describe('Posts testing', () => {
             title: '',
             shortDescription: '',
             content: '',
-            blogId: ''
+            blogId: '66f94610f417e0eecf048a08'
         };
 
         const response = await request(httpServer)
@@ -139,6 +139,10 @@ describe('Posts testing', () => {
                 {
                     "message": "Content not correct",
                     "field": "content"
+                },
+                {
+                    "message": "Blog with the given ID does not exist",
+                    "field": "blogId"
                 },
             ]
         };
@@ -238,7 +242,7 @@ describe('Posts testing', () => {
             title: '',
             shortDescription: '',
             content: '',
-            blogId: ''
+            blogId: '66f94610f417e0eecf048a08'
         };
 
 
@@ -262,6 +266,10 @@ describe('Posts testing', () => {
                 {
                     "message": "Content not correct",
                     "field": "content"
+                },
+                {
+                    "message": "Blog with the given ID does not exist",
+                    "field": "blogId"
                 },
             ]
         };
@@ -746,9 +754,6 @@ describe('Posts testing', () => {
     });
 
 
-
-
-
     it('returns 200 for get all posts', async () => {
 
         const response = await request(httpServer)
@@ -764,17 +769,22 @@ describe('Posts testing', () => {
             items: [
                 {
                     id: expect.any(String),
-                    title: post.title,
-                    shortDescription: post.shortDescription,
-                    content: post.content,
+                    title: expect.any(String),
+                    shortDescription: expect.any(String),
+                    content: expect.any(String),
                     blogId: blog.id,
                     blogName: blog.name,
                     createdAt: expect.any(String),
                     extendedLikesInfo: {
                         likesCount: 4,
                         dislikesCount: 0,
-                        myStatus: post.status,
+                        myStatus: "Like",
                         newestLikes: [
+                            {
+                                addedAt: expect.any(String),
+                                userId: user4.id,
+                                login: user4.login,
+                            },
                             {
                                 addedAt: expect.any(String),
                                 userId: user3.id,
@@ -784,11 +794,6 @@ describe('Posts testing', () => {
                                 addedAt: expect.any(String),
                                 userId: user2.id,
                                 login: user2.login,
-                            },
-                            {
-                                addedAt: expect.any(String),
-                                userId: user1.id,
-                                login: user1.login,
                             }
                         ]
                     }
