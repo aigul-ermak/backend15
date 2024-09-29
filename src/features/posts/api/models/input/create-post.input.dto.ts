@@ -1,6 +1,6 @@
 import {IsMongoId, IsString, Length, Validate} from "class-validator";
 import {Trim} from "../../../../../infrastructure/decorators/transform/trim";
-import {IsValidBlogId} from "../../../../../infrastructure/decorators/validation/paramId.decorator";
+import {IsValidBlogId} from "../../../../../infrastructure/decorators/validation/isValidBlogId.decorator";
 import {IsBlogByIdExistsConstraint} from "../../../../../infrastructure/decorators/validation/blog-is-exist.decorator";
 
 export class CreatePostInputDto {

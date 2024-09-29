@@ -159,7 +159,6 @@ describe('Blogs testing', () => {
         });
     });
 
-
     it('return 200 for get blog', async () => {
 
         const blogId = blog.id;
@@ -196,7 +195,6 @@ describe('Blogs testing', () => {
             error: 'Not Found'
         });
     });
-
 
     it('return 204 for update blog', async () => {
 
