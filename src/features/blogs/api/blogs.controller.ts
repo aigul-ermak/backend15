@@ -17,7 +17,7 @@ import {
 import {CreateBlogUseCaseCommand} from "../../usecases/createBlogUseCase";
 import {GetBlogByIdUseCaseCommand} from "../../usecases/getBlogByIdUseCase";
 import {BlogOutputModel} from "./models/output/blog.output.model";
-import {BasicAuthGuard} from "../../auth/basic-auth.guard";
+import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {SortBlogsDto} from "./models/input/sort-blog.input.dto";
 import {GetAllBlogsUseCaseCommand} from "../../usecases/getAllBlogsUseCase";
 import {DeleteBlogByIdUseCaseCommand} from "../../usecases/deleteBlogByIdUseCase";
