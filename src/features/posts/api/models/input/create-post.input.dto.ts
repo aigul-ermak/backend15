@@ -1,6 +1,7 @@
-import {IsString, Length} from "class-validator";
+import {IsMongoId, IsString, Length, Validate} from "class-validator";
 import {Trim} from "../../../../../infrastructure/decorators/transform/trim";
-import {ValidateBlogExists} from "../../../../../infrastructure/decorators/validate/blog-is-exist.decorator";
+import {IsValidBlogId} from "../../../../../infrastructure/decorators/validation/paramId.decorator";
+import {IsBlogByIdExistsConstraint} from "../../../../../infrastructure/decorators/validation/blog-is-exist.decorator";
 
 export class CreatePostInputDto {
     @IsString()
@@ -20,7 +21,8 @@ export class CreatePostInputDto {
 
     // @IsString()
     // @Trim()
-    @ValidateBlogExists({message: "Blog not correct"})
+    //@ValidateBlogExists({message: "Blog not correct"})
+    @IsMongoId()
     blogId: string;
 }
 
@@ -40,8 +42,11 @@ export class CreatePostForBlogInputDto {
     @Length(1, 1000, {message: "Content not correct"})
     content: string;
 
-    @IsString()
-    @Trim()
+
+    //@IsMongoId({message: "Invalid blogId format"})
+    @IsString({message: 'It should be a string'})
+    // @Validate(IsBlogByIdExistsConstrain
+    @IsValidBlogId()
     blogId: string;
 }
 
@@ -63,6 +68,6 @@ export class UpdatePostDto {
 
     @IsString()
     @Trim()
-    @Length(1, 1000, {message: "Blog id not correct"})
+
     blogId: string;
 }
