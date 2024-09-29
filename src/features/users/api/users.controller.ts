@@ -13,7 +13,7 @@ import {UsersService} from '../application/users.service';
 import {CreateUserDto} from "./models/input/create-user.input.dto";
 import {UserOutputModel} from "./models/output/user.output.model";
 import {UsersQueryRepository} from "../infrastructure/users.query-repository";
-import {BasicAuthGuard} from "../../auth/basic-auth.guard";
+import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {SortUserDto} from "./models/output/sort.user.dto";
 import {CreateUserUseCase} from "../../usecases/createUserUseCase";
 
