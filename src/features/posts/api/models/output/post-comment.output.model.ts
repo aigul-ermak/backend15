@@ -13,12 +13,13 @@ export class PostCommentOutputModel {
     }
 }
 
-export const PostCommentOutputModelMapper = (postComment: any): PostCommentOutputModel => {
+export const PostCommentOutputModelMapper = (postComment: any, status: string): PostCommentOutputModel => {
     //TODO type?
     const outputModel = new PostCommentOutputModel();
 
     outputModel.postId = postComment._id.toString();
     outputModel.content = postComment.content;
+
     outputModel.commentatorInfo = {
         userId: postComment.commentatorInfo.userId,
         userLogin: postComment.commentatorInfo.userLogin
@@ -28,7 +29,7 @@ export const PostCommentOutputModelMapper = (postComment: any): PostCommentOutpu
     outputModel.likesInfo = {
         likesCount: postComment.likesCount ?? 0,
         dislikesCount: postComment.dislikesCount ?? 0,
-        myStatus: 'None',
+        myStatus: status,
     }
 
     return outputModel;
