@@ -61,10 +61,13 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
 
             if (command.likeStatus.likeStatus == LIKE_STATUS.LIKE) {
                 await this.commentsRepository.incrementLikeCount(command.commentId);
+
             } else if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
                 await this.commentsRepository.incrementDislikeCount(command.commentId,);
             }
+
             return res;
+
         } else {
 
             const currentLike = await this.likeCommentQueryRepository.getLike(command.commentId, command.userId);
@@ -82,8 +85,9 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
 
             if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
                 if (currentLike!.status === LIKE_STATUS.LIKE) {
-                    await this.commentsRepository.decrementLikeCount(command.commentId);
-                    await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
+                    return;
+                    // await this.commentsRepository.decrementLikeCount(command.commentId);
+                    // await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
 
                 } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
                     await this.commentsRepository.incrementLikeCount(command.commentId);
@@ -99,11 +103,12 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
                     await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.DISLIKE});
 
                 } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
-                    await this.commentsRepository.decrementDislikeCount(command.commentId);
-                    await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
+                    return;
+                    // await this.commentsRepository.decrementDislikeCount(command.commentId);
+                    // await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
                 }
             }
-          
+
         }
     }
 }
