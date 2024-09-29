@@ -1,7 +1,7 @@
 import {Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Put, Req, UseGuards} from "@nestjs/common";
 import {CommandBus} from "@nestjs/cqrs";
-import {BasicAuthGuard} from "../../../auth/basic-auth.guard";
-import {JwtAuthGuard} from "../../../auth/jwt-auth.guard";
+import {BasicAuthGuard} from "../../../../infrastructure/guards/basic-auth.guard";
+import {JwtAuthGuard} from "../../../../infrastructure/guards/jwt-auth.guard";
 import {LikeStatusInputDto} from "../../../likePost/api/model/like-status.input.dto";
 import {Request} from "express";
 import {CommentInputDto} from "./input/comment-input.dto";
@@ -59,8 +59,10 @@ export class CommentsController {
 
     @Delete(':id')
     @HttpCode(204)
-    @UseGuards(BasicAuthGuard)
-    async deleteComment(@Param('id') id: string): Promise<void> {
+    // @UseGuards(BasicAuthGuard)
+    @UseGuards(JwtAuthGuard)
+    async deleteComment(@Param('id') id: string, @Req() req: Request): Promise<void> {
+        const userId = req['userId'];
 
         const result = await this.commandBus.execute(
             new DeleteCommentByIdUseCaseCommand(id));
