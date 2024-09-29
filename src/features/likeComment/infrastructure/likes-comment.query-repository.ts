@@ -9,7 +9,7 @@ export class LikesCommentQueryRepository {
     }
 
     async getLike(commentId: string, userId: string) {
-        return await this.likeCommentModel.findOne({commentId: commentId, userId: userId});
+        return this.likeCommentModel.findOne({commentId: commentId, userId: userId});
     }
 
     async checkLike({commentId, userId}: { commentId: string, userId: string }) {
