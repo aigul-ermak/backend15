@@ -6,7 +6,7 @@ import {Injectable} from "@nestjs/common";
 // @Injectable()
 // export class NameIsExistConstraint implements ValidatorConstraintInterface {
 //     constructor(private readonly usersRepository: UsersRepository) {}
-//     async validate(value: any, args: ValidationArguments) {
+//     async validation(value: any, args: ValidationArguments) {
 //         const nameIsExist = await this.usersRepository.nameIsExist(value);
 //         return !nameIsExist;
 //     }
