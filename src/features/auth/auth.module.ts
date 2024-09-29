@@ -5,8 +5,8 @@ import {AuthController} from "./api/auth.controller";
 import {jwtAccessConstants} from "./constants";
 import {APP_GUARD} from "@nestjs/core";
 import {JwtModule, JwtService} from "@nestjs/jwt";
-import {LocalStrategy} from "./local.strategy";
-import {BasicStrategy} from "./basic.strategy";
+import {LocalStrategy} from "../../infrastructure/guards/local.strategy";
+import {BasicStrategy} from "../../infrastructure/guards/basic.strategy";
 import {EmailModule} from "../email/email.module";
 
 @Module
