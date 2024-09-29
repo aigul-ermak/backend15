@@ -15,14 +15,14 @@ import {CreatePostForBlogInputDto, UpdatePostDto} from './models/input/create-po
 import {CommandBus} from "@nestjs/cqrs";
 import {CreatePostUseCaseCommand} from "../../usecases/createPostUseCase";
 import {GetPostByIdUseCaseCommand} from "../../usecases/getPostByIdUseCase";
-import {BasicAuthGuard} from "../../auth/basic-auth.guard";
+import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {UpdatePostUseCaseCommand} from "../../usecases/updatePostUseCase";
 import {SortPostsDto} from "./models/input/sort-post.input.dto";
 import {GetAllPostsUseCaseCommand} from "../../usecases/getAllPostsUseCase";
 import {DeletePostByIdUseCaseCommand} from "../../usecases/deletePostByIdUseCase";
 import {CreateLikeForPostUseCaseCommand} from "../../usecases/createLikeForPostUseCase";
 import {LikeStatusInputDto} from "../../likePost/api/model/like-status.input.dto";
-import {JwtAuthGuard} from "../../auth/jwt-auth.guard";
+import {JwtAuthGuard} from "../../../infrastructure/guards/jwt-auth.guard";
 import {CreateCommentForPostUseCaseCommand} from "../../usecases/createCommentForPostUseCase";
 import {CommentInputDto} from "../../comments/api/model/input/comment-input.dto";
 import {GetCommentsForPostUseCaseCommand} from "../../usecases/getCommentsForPostUseCase";
@@ -111,12 +111,16 @@ export class PostsController {
     @Get(':id/comments')
     @HttpCode(200)
     // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthNullableGuard)
     async getCommentsForPost(
         @Param('id') postId: string,
-        @Query() sortData: SortPostsDto
+        @Query() sortData: SortPostsDto,
+        @Req() req: Request
     ) {
+        const userId = req['userId'];
+
         return await this.commandBus.execute(
-            new GetCommentsForPostUseCaseCommand(postId, sortData)
+            new GetCommentsForPostUseCaseCommand(postId, sortData, userId)
         );
 
     }
@@ -127,7 +131,7 @@ export class PostsController {
     @UseGuards(JwtAuthNullableGuard)
     async getAllPosts(
         @Query() sortData: SortPostsDto,
-        @Req() req: Request,) {
+        @Req() req: Request) {
 
         const userId = req['userId'];
 
