@@ -8,10 +8,8 @@ import {
     Post,
     Query, UseGuards,
 } from '@nestjs/common';
-import {UsersService} from '../application/users.service';
 import {CreateUserDto} from "./models/input/create-user.input.dto";
 import {UserOutputModel} from "./models/output/user.output.model";
-import {UsersQueryRepository} from "../infrastructure/users.query-repository";
 import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {SortUserDto} from "./models/output/sort.user.dto";
 import {CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
@@ -21,7 +19,6 @@ import {DeleteUserByIdUseCaseCommand} from "../../usecases/deleteUserByIdUseCase
 
 @Controller('users')
 export class UsersController {
-    usersService: UsersService;
 
     constructor(
         private commandBus: CommandBus,
