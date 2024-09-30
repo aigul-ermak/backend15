@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Body,
     Controller,
     Get,
@@ -10,26 +9,24 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import {Response} from 'express';
-import {UsersService} from "../../users/application/users.service";
-import {AuthService} from "../application/auth.service";
 import {UserLoginDto} from "./models/input/login-user.input.dto";
 import {CreateUserDto} from "../../users/api/models/input/create-user.input.dto";
 import {AuthGuard} from "../../../infrastructure/guards/auth.guard";
 import {ResendEmailDto} from "../../email/models/input/email.input.dto";
 import {CommandBus} from "@nestjs/cqrs";
-import {CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
 import {LoginUserUseCaseCommand} from "../../usecases/loginUserUseCase";
 import {ConfirmEmailUseCaseCommand} from "../../usecases/confirmEmailUseCase";
+import {CreateUserRegistrationUseCaseCommand} from "../../usecases/createUserRegistrationUseCase";
+import {SendNewCodeToEmailUseCaseCommand} from "../../usecases/sendNewCodeToEmailUseCase";
+import {GetMeUseCaseCommand} from "../../usecases/getMeUseCase";
 
 
 @Controller('auth')
 export class AuthController {
 
     constructor(
-        private authService: AuthService,
         private commandBus: CommandBus,
     ) {
-        this.authService = authService;
     }
 
     @Post('/login')
@@ -80,11 +77,6 @@ export class AuthController {
 
         await this.commandBus.execute(new ConfirmEmailUseCaseCommand(code));
 
-        // const result: boolean = await this.authService.confirmEmail(code)
-        //
-        // if (!result) {
-        //     throw new BadRequestException()
-        // }
     }
 
     @Post('/registration')
@@ -92,16 +84,15 @@ export class AuthController {
     async registration(
         @Body() createUserDto: CreateUserDto) {
 
-        return await this.authService.createUser(
-            createUserDto
-        );
+        await this.commandBus.execute(new CreateUserRegistrationUseCaseCommand(createUserDto));
+
     }
 
     @Post('/registration-email-resending')
     @HttpCode(204)
     async sendNewCodeToEmail(@Body() resendEmailDto: ResendEmailDto) {
-        const {email} = resendEmailDto;
-        await this.authService.sendNewCodeToEmail(email);
+
+        await this.commandBus.execute(new SendNewCodeToEmailUseCaseCommand(resendEmailDto));
 
     }
 
@@ -112,19 +103,12 @@ export class AuthController {
         @Req() req: Request
     ) {
         const userId = req['user']?.id;
+
         const userLogin = req['user'].login;
 
-        const user = await this.authService.findUserById(userId.toString())
+        const result = this.commandBus.execute(new GetMeUseCaseCommand(userId));
 
-        if (!user) {
-            throw new BadRequestException();
-        }
-
-        return ({
-            "email": user.email,
-            "login": user.login,
-            "userId": user.id
-        })
+        return result;
     }
 }
 

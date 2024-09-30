@@ -66,6 +66,9 @@ import {GetAllUsersUseCase} from "./features/usecases/getAllUsersUseCase";
 import {DeleteUserByIdUseCase} from "./features/usecases/deleteUserByIdUseCase";
 import {LoginUserUseCase} from "./features/usecases/loginUserUseCase";
 import {ConfirmEmailUseCase} from "./features/usecases/confirmEmailUseCase";
+import {CreateUserRegistrationUseCase} from "./features/usecases/createUserRegistrationUseCase";
+import {SendNewCodeToEmailUseCase} from "./features/usecases/sendNewCodeToEmailUseCase";
+import {GetMeUseCase} from "./features/usecases/getMeUseCase";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
@@ -75,8 +78,8 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
     UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase,
     CreateLikeForPostUseCase, GetCommentsForPostUseCase, CreateCommentForPostUseCase,
     CreateLikeForCommentUseCase, GetCommentByIdUseCase, DeleteCommentByIdUseCase, UpdateCommentUseCase,
-    GetAllUsersUseCase, DeleteUserByIdUseCase, LoginUserUseCase, ConfirmEmailUseCase
-]
+    GetAllUsersUseCase, DeleteUserByIdUseCase, LoginUserUseCase, ConfirmEmailUseCase, CreateUserRegistrationUseCase,
+    SendNewCodeToEmailUseCase, GetMeUseCase]
 
 @Module({
     imports: [
