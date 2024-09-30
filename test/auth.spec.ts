@@ -18,8 +18,7 @@ describe('Auth testing', () => {
     let app: INestApplication;
     let httpServer;
 
-    let user;
-    let newUser2;
+    let user, newUser2, accessToken;
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -73,22 +72,163 @@ describe('Auth testing', () => {
 
     });
 
+    it('return 200 for login user', async () => {
 
-    it('/registration User registration', async () => {
-
-        const userDto = {
-            login: user.login,
-            password: user.password,
-            email: user.email
+        const userLoginDto = {
+            loginOrEmail: "example@example.com",
+            password: "password",
         };
 
-        await request(httpServer)
-            .post('/auth/registration')
-            //.set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
-            .send(userDto)
-            .expect(204);
+        const response = await request(httpServer)
+            .post(`/auth/login`)
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .send(userLoginDto)
+            .expect(200);
+
+
+        const expectedResult = {
+            accessToken: expect.any(String)
+        };
+
+        accessToken = response.body;
+
+        expect(response.body).toEqual(expectedResult);
 
     });
+
+    it('return 400 for login user', async () => {
+
+        const userLoginDto = {
+            loginOrEmail: "",
+            password: "",
+        };
+
+        const response = await request(httpServer)
+            .post(`/auth/login`)
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .send(userLoginDto)
+            .expect(400);
+
+
+        const expectedResult = {
+            "errorsMessages": [
+                {
+                    "message": "loginOrEmail should not be empty",
+                    "field": "loginOrEmail"
+                },
+                {
+                    "message": "password should not be empty",
+                    "field": "password"
+                },
+            ]
+        };
+
+        expect(response.body).toEqual(expectedResult);
+
+    });
+
+    it('return 401 for login user: wrong email', async () => {
+
+        const userLoginDto = {
+            loginOrEmail: "example1@example.com",
+            password: "password",
+        };
+
+        const response = await request(httpServer)
+            .post(`/auth/login`)
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .send(userLoginDto)
+            .expect(401);
+
+        expect(response.body).toEqual({
+            error: 'Unauthorized',
+            message: 'Invalid credentials',
+            statusCode: 401
+        });
+
+    });
+
+    it('return 401 for login user: wrong password', async () => {
+
+        const userLoginDto = {
+            loginOrEmail: "example@example.com",
+            password: "passwordd",
+        };
+
+        const response = await request(httpServer)
+            .post(`/auth/login`)
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .send(userLoginDto)
+            .expect(401);
+
+        expect(response.body).toEqual({
+            error: 'Unauthorized',
+            message: 'Invalid credentials',
+            statusCode: 401
+        });
+
+    });
+
+    it('return 204 for user registration', async () => {
+
+        const userRegistrationDto = {
+            login: 'user1',
+            password: 'password',
+            email: 'example@example.com'
+        };
+
+        const response = await request(httpServer)
+            .post('/auth/registration')
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .send(userRegistrationDto)
+            .expect(204);
+
+        expect(response.body).toEqual({});
+
+    });
+
+
+    it('return 400 for user registration', async () => {
+
+        const userRegistrationDto = {
+            login: '',
+            password: '',
+            email: ''
+        };
+
+        const response = await request(httpServer)
+            .post('/auth/registration')
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .send(userRegistrationDto)
+            .expect(400);
+
+        const expectedResult = {
+            "errorsMessages": [
+                {
+                    "message": "Length not correct",
+                    "field": "login"
+                },
+                {
+                    "message": "Length not correct",
+                    "field": "password"
+                },
+                {
+                    "message": "email must be an email",
+                    "field": "email"
+                },
+            ]
+        };
+
+        expect(response.body).toEqual(expectedResult);
+
+    });
+
+
+    it('return 429 for user registration', async () => {
+
+       
+    });
+
 
     // it('POST /auth/registration - should return 400 login already exists', async () => {
     //
