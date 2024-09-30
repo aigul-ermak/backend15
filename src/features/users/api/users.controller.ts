@@ -17,6 +17,7 @@ import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {SortUserDto} from "./models/output/sort.user.dto";
 import {CreateUserUseCase, CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
 import {CommandBus} from "@nestjs/cqrs";
+import {GetAllUsersUseCaseCommand} from "../../usecases/getAllUsersUseCase";
 
 @Controller('users')
 export class UsersController {
@@ -44,7 +45,9 @@ export class UsersController {
     @Get()
     @UseGuards(BasicAuthGuard)
     async getAllUsers(@Query() sortData: SortUserDto) {
-        return this.usersService.getAllUsers(sortData);
+
+        return await this.commandBus.execute(new GetAllUsersUseCaseCommand(sortData));
+
     }
 
     @Delete(':id')
