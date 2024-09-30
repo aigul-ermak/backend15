@@ -28,9 +28,6 @@ export class AuthController {
         this.authService = authService;
     }
 
-    //@HttpCode(HttpStatus.OK)
-
-    // @UseGuards(LocalAuthGuard)
     @Post('/login')
     @HttpCode(200)
     async login(@Body() loginDto: UserLoginDto,
@@ -86,7 +83,7 @@ export class AuthController {
     async registration(
         @Body() createUserDto: CreateUserDto) {
 
-        const result = await this.authService.createUser(
+        return await this.authService.createUser(
             createUserDto
         );
     }
