@@ -21,7 +21,6 @@ import {EmailModule} from "../email/email.module";
         }),
     ],
     providers: [AuthService, LocalStrategy, JwtService, BasicStrategy],
-    controllers: [AuthController],
     exports: [AuthService],
 })
 

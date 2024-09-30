@@ -64,6 +64,7 @@ import {LikeComment, LikesCommentEntity} from "./features/likeComment/domain/lik
 import {CommentsController} from "./features/comments/api/model/comments.controller";
 import {GetAllUsersUseCase} from "./features/usecases/getAllUsersUseCase";
 import {DeleteUserByIdUseCase} from "./features/usecases/deleteUserByIdUseCase";
+import {LoginUserUseCase} from "./features/usecases/loginUserUseCase";
 
 
 const usersProviders: Provider[] = [UsersRepository, UsersQueryRepository, UsersService];
@@ -73,7 +74,7 @@ const useCases = [CreateUserUseCase, CreateBlogUseCase, GetBlogByIdUseCase, GetA
     UpdatePostUseCase, GetAllPostsUseCase, DeletePostByIdUseCase, GetAllPostsForBlogUseCase,
     CreateLikeForPostUseCase, GetCommentsForPostUseCase, CreateCommentForPostUseCase,
     CreateLikeForCommentUseCase, GetCommentByIdUseCase, DeleteCommentByIdUseCase, UpdateCommentUseCase,
-    GetAllUsersUseCase, DeleteUserByIdUseCase
+    GetAllUsersUseCase, DeleteUserByIdUseCase, LoginUserUseCase
 ]
 
 @Module({

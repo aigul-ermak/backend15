@@ -16,14 +16,17 @@ import {UserLoginDto} from "./models/input/login-user.input.dto";
 import {CreateUserDto} from "../../users/api/models/input/create-user.input.dto";
 import {AuthGuard} from "../../../infrastructure/guards/auth.guard";
 import {ResendEmailDto} from "../../email/models/input/email.input.dto";
+import {CommandBus} from "@nestjs/cqrs";
+import {CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
+import {LoginUserUseCaseCommand} from "../../usecases/loginUserUseCase";
 
 
 @Controller('auth')
 export class AuthController {
-    userService: UsersService;
 
     constructor(
-        private authService: AuthService
+        private authService: AuthService,
+        private commandBus: CommandBus,
     ) {
         this.authService = authService;
     }
@@ -37,8 +40,10 @@ export class AuthController {
         const userDevice: string = "testdeviceid";
         const userAgent: string = "user-agent";
 
-        const {accessToken, refreshToken} = await this
-            .authService.loginUser(loginDto, userIP, userDevice, userAgent);
+        const {
+            accessToken,
+            refreshToken
+        } = await this.commandBus.execute(new LoginUserUseCaseCommand(loginDto, userIP, userDevice, userAgent));
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -48,6 +53,7 @@ export class AuthController {
         });
 
         return res.json({accessToken});
+
     }
 
     //
