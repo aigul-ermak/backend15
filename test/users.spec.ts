@@ -48,6 +48,7 @@ describe('Users testing', () => {
     it('Get all users before create users', async () => {
         const response = await request(httpServer)
             .get('/users')
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
             .expect(200);
 
         const expectedResponse = {
@@ -60,7 +61,6 @@ describe('Users testing', () => {
 
         expect(response.body).toEqual(expectedResponse);
     });
-
 
     it('/users Create user', async () => {
 
@@ -119,30 +119,44 @@ describe('Users testing', () => {
     it('Get all users after create user', async () => {
         const response = await request(httpServer)
             .get('/users')
+            .set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
             .expect(200);
 
         const expectedResponse = {
-            pagesCount: 0,
+            pagesCount: 1,
             page: 1,
             pageSize: 10,
             totalCount: 2,
             items: [
+                {
+                    id: newUser2.id,
+                    login: newUser2.login,
+                    email: newUser2.email,
+                    createdAt: newUser2.createdAt
+                },
                 {
                     id: newUser1.id,
                     login: newUser1.login,
                     email: newUser1.email,
                     createdAt: newUser1.createdAt
                 },
-                {
-                    id: newUser2.id,
-                    login: newUser2.login,
-                    email: newUser2.email,
-                    createdAt: newUser2.createdAt
-                }
             ]
         };
 
         expect(response.body).toEqual(expectedResponse);
+    });
+
+    it('401 Get all users after create user', async () => {
+        const response = await request(httpServer)
+            .get('/users')
+            //.set('Authorization', getBasicAuthHeader(HTTP_BASIC_USER, HTTP_BASIC_PASS))
+            .expect(401);
+
+        expect(response.body).toEqual({
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+
     });
 
 });
