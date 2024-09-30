@@ -804,7 +804,6 @@ describe('Posts testing', () => {
         expect(response.body).toEqual(expectedResponse);
     });
 
-
     it('returns 204 for delete post', async () => {
 
         const postId = post.id;
@@ -815,7 +814,7 @@ describe('Posts testing', () => {
             .expect(204);
     });
 
-    it('returns 201 for delete blog: unauthorised user', async () => {
+    it('returns 201 for delete post: unauthorised user', async () => {
 
         const postId = post.id;
 
@@ -824,7 +823,7 @@ describe('Posts testing', () => {
             .expect(401);
     });
 
-    it('returns 404 for delete blog: Not found', async () => {
+    it('returns 404 for delete post: Not found', async () => {
 
         const postId = '66f6a26adc4b81ea41af73f8';
 

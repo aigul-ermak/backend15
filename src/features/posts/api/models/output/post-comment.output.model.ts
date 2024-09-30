@@ -1,5 +1,5 @@
 export class PostCommentOutputModel {
-    postId: string;
+    id: string;
     content: string;
     commentatorInfo: {
         userId: string,
@@ -17,7 +17,7 @@ export const PostCommentOutputModelMapper = (postComment: any, status: string): 
     //TODO type?
     const outputModel = new PostCommentOutputModel();
 
-    outputModel.postId = postComment._id.toString();
+    outputModel.id = postComment._id.toString();
     outputModel.content = postComment.content;
 
     outputModel.commentatorInfo = {
