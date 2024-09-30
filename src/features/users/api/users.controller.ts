@@ -18,6 +18,7 @@ import {SortUserDto} from "./models/output/sort.user.dto";
 import {CreateUserUseCase, CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
 import {CommandBus} from "@nestjs/cqrs";
 import {GetAllUsersUseCaseCommand} from "../../usecases/getAllUsersUseCase";
+import {DeleteUserByIdUseCaseCommand} from "../../usecases/deleteUserByIdUseCase";
 
 @Controller('users')
 export class UsersController {
@@ -54,9 +55,8 @@ export class UsersController {
     @HttpCode(204)
     @UseGuards(BasicAuthGuard)
     async deleteUser(@Param('id') id: string): Promise<void> {
-        const result = await this.usersService.deleteUserById(id);
-        if (!result) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
+
+        return await this.commandBus.execute(new DeleteUserByIdUseCaseCommand(id));
+
     }
 }
