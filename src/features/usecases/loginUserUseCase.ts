@@ -1,6 +1,3 @@
-import {BlogsRepository} from "../blogs/infrastructure/blogs.repository";
-import {Blog} from "../blogs/domain/blog.entity";
-import {BlogInputDto} from "../blogs/api/models/input/blog-input.dto";
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {UsersRepository} from "../users/infrastructure/users.repository";
 import {UsersQueryRepository} from "../users/infrastructure/users.query-repository";
@@ -9,7 +6,6 @@ import {UnauthorizedException} from "@nestjs/common";
 import {jwtRefreshConstants} from "../auth/constants";
 import bcrypt from "bcrypt";
 import {JwtService} from "@nestjs/jwt";
-import {UserOutputModel, UserWithIdOutputModel} from "../users/api/models/output/user.output.model";
 
 
 export class LoginUserUseCaseCommand {
