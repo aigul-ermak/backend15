@@ -15,7 +15,8 @@ import {UserOutputModel} from "./models/output/user.output.model";
 import {UsersQueryRepository} from "../infrastructure/users.query-repository";
 import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {SortUserDto} from "./models/output/sort.user.dto";
-import {CreateUserUseCase} from "../../usecases/createUserUseCase";
+import {CreateUserUseCase, CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
+import {CommandBus} from "@nestjs/cqrs";
 
 @Controller('users')
 export class UsersController {
@@ -25,6 +26,7 @@ export class UsersController {
         userService: UsersService,
         private readonly usersQueryRepository: UsersQueryRepository,
         private createUserUseCase: CreateUserUseCase,
+        private commandBus: CommandBus,
     ) {
         this.usersService = userService;
     }
@@ -36,19 +38,7 @@ export class UsersController {
         @Body() createUserDto: CreateUserDto,
     ): Promise<UserOutputModel> {
 
-        const userId = await this.createUserUseCase.execute(
-            createUserDto.email,
-            createUserDto.login,
-            createUserDto.password,
-        );
-
-        const user = await this.usersQueryRepository.getUserById(userId);
-
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-
-        return user;
+        return await this.commandBus.execute(new CreateUserUseCaseCommand(createUserDto));
     }
 
     @Get()
