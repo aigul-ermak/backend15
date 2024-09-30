@@ -753,7 +753,6 @@ describe('Posts testing', () => {
 
     });
 
-
     it('returns 200 for get all posts', async () => {
 
         const response = await request(httpServer)

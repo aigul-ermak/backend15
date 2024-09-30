@@ -619,58 +619,6 @@ describe('Posts testing', () => {
 
     });
 
-
-    // it('returns 200 for get all posts', async () => {
-    //
-    //     const response = await request(httpServer)
-    //         .get('/posts')
-    //         .set('Authorization', `Bearer ${accessToken1}`)
-    //         .expect(200);
-    //
-    //     const expectedResponse = {
-    //         pagesCount: 1,
-    //         page: 1,
-    //         pageSize: 10,
-    //         totalCount: 1,
-    //         items: [
-    //             {
-    //                 id: expect.any(String),
-    //                 title: post.title,
-    //                 shortDescription: post.shortDescription,
-    //                 content: post.content,
-    //                 blogId: blog.id,
-    //                 blogName: blog.name,
-    //                 createdAt: expect.any(String),
-    //                 extendedLikesInfo: {
-    //                     likesCount: 4,
-    //                     dislikesCount: 0,
-    //                     myStatus: post.status,
-    //                     newestLikes: [
-    //                         {
-    //                             addedAt: expect.any(String),
-    //                             userId: user3.id,
-    //                             login: user3.login,
-    //                         },
-    //                         {
-    //                             addedAt: expect.any(String),
-    //                             userId: user2.id,
-    //                             login: user2.login,
-    //                         },
-    //                         {
-    //                             addedAt: expect.any(String),
-    //                             userId: user1.id,
-    //                             login: user1.login,
-    //                         }
-    //                     ]
-    //                 }
-    //             }
-    //         ]
-    //     };
-    //
-    //     expect(response.body).toEqual(expectedResponse);
-    // });
-
-
     it('returns 204 for delete post', async () => {
 
         const postId = post.id;
