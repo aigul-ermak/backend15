@@ -29,9 +29,9 @@ export class UsersController {
         this.usersService = userService;
     }
 
-    @UseGuards(BasicAuthGuard)
     @Post()
     @HttpCode(201)
+    @UseGuards(BasicAuthGuard)
     async create(
         @Body() createUserDto: CreateUserDto,
     ): Promise<UserOutputModel> {
@@ -52,13 +52,14 @@ export class UsersController {
     }
 
     @Get()
+    @UseGuards(BasicAuthGuard)
     async getAllUsers(@Query() sortData: SortUserDto) {
         return this.usersService.getAllUsers(sortData);
     }
 
-    @UseGuards(BasicAuthGuard)
     @Delete(':id')
     @HttpCode(204)
+    @UseGuards(BasicAuthGuard)
     async deleteUser(@Param('id') id: string): Promise<void> {
         const result = await this.usersService.deleteUserById(id);
         if (!result) {
