@@ -4,6 +4,7 @@ import {Model} from "mongoose";
 import {Comment, CommentDocument} from "../domain/comment.entity";
 import {CommentInputDto} from "../api/model/input/comment-input.dto";
 import {UpdatePostLikesCountDto} from "../../posts/api/models/input/create-postLikesCount.input.dto";
+import {LIKE_STATUS} from "../../../base/enum/enums";
 
 
 @Injectable()
@@ -22,6 +23,18 @@ export class CommentsRepository {
             .findByIdAndUpdate(id, updateCommentDto, {new: true})
             .exec();
     }
+
+    // async updateCommentAfterLike(id: string, likeStatus: LIKE_STATUS) {
+    //     return this.commentModel
+    //         .findByIdAndUpdate(id, likeStatus, {new: true})
+    //         .exec();
+    // }
+
+    async updateCommentStatusToNone(commentId: string, myStatus: string): Promise<void> {
+        await this.commentModel.findByIdAndUpdate(commentId, {myStatus})
+            .exec();
+    }
+
 
     async updatePostLikesCount(id: string, updatePostLikesCountDto: UpdatePostLikesCountDto) {
         return this.commentModel

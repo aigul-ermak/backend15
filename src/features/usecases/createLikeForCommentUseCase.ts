@@ -57,7 +57,7 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
                 createdAt: Date.now(),
             };
 
-            const res = await this.likeCommentRepository.createLike(newLike);
+            await this.likeCommentRepository.createLike(newLike);
 
             if (command.likeStatus.likeStatus == LIKE_STATUS.LIKE) {
                 await this.commentsRepository.incrementLikeCount(command.commentId);
@@ -66,47 +66,45 @@ export class CreateLikeForCommentUseCase implements ICommandHandler<CreateLikeFo
                 await this.commentsRepository.incrementDislikeCount(command.commentId,);
             }
 
-            return res;
-
         } else {
 
             const currentLike = await this.likeCommentQueryRepository.getLike(command.commentId, command.userId);
 
+            if (!currentLike) {
+                throw new BadRequestException();
+            }
+
             if (command.likeStatus.likeStatus === LIKE_STATUS.NONE) {
-                await this.commentsRepository.deleteLikeStatus(command.commentId, command.userId);
-
-                const updatedLikesInfo = {
-                    likesCount: 0,
-                    dislikesCount: 0,
-                };
-
-                await this.commentsRepository.updatePostLikesCount(command.commentId, updatedLikesInfo)
+                if (currentLike.status === LIKE_STATUS.LIKE) {
+                    await this.commentsRepository.decrementLikeCount(command.commentId);
+                } else if (currentLike.status === LIKE_STATUS.DISLIKE) {
+                    await this.commentsRepository.decrementDislikeCount(command.commentId);
+                }
+                await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
+                return;
             }
 
             if (command.likeStatus.likeStatus === LIKE_STATUS.LIKE) {
                 if (currentLike!.status === LIKE_STATUS.LIKE) {
                     return;
-                    // await this.commentsRepository.decrementLikeCount(command.commentId);
-                    // await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
 
                 } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
                     await this.commentsRepository.incrementLikeCount(command.commentId);
                     await this.commentsRepository.decrementDislikeCount(command.commentId);
-                    await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.LIKE});
                 }
+                await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.LIKE});
             }
 
             if (command.likeStatus.likeStatus === LIKE_STATUS.DISLIKE) {
-                if (currentLike!.status === LIKE_STATUS.LIKE) {
+
+                if (currentLike!.status === LIKE_STATUS.DISLIKE) {
+                    return;
+                } else if (currentLike!.status === LIKE_STATUS.LIKE) {
                     await this.commentsRepository.decrementLikeCount(command.commentId);
                     await this.commentsRepository.incrementDislikeCount(command.commentId);
-                    await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.DISLIKE});
 
-                } else if (currentLike!.status === LIKE_STATUS.DISLIKE) {
-                    return;
-                    // await this.commentsRepository.decrementDislikeCount(command.commentId);
-                    // await this.likeCommentRepository.deleteLikeStatus(command.commentId, command.userId);
                 }
+                await this.likeCommentRepository.updateLike(currentLike!._id.toString(), {status: LIKE_STATUS.DISLIKE});
             }
 
         }

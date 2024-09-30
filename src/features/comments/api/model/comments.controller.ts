@@ -31,14 +31,16 @@ export class CommentsController {
 
     @Put(':id')
     @HttpCode(204)
-    @UseGuards(BasicAuthGuard)
+    @UseGuards(JwtAuthGuard)
     async updateComment(
         @Param('id') id: string,
-        @Body() updatePostDto: CommentInputDto,
+        @Body() updateCommentDto: CommentInputDto,
+        @Req() req,
     ) {
+        const userId = req['userId'];
 
         return await this.commandBus.execute(
-            new UpdateCommentUseCaseCommand(id, updatePostDto));
+            new UpdateCommentUseCaseCommand(id, updateCommentDto, userId));
 
     }
 
@@ -65,7 +67,7 @@ export class CommentsController {
         const userId = req['userId'];
 
         const result = await this.commandBus.execute(
-            new DeleteCommentByIdUseCaseCommand(id));
+            new DeleteCommentByIdUseCaseCommand(id, userId));
 
         if (!result) {
             throw new NotFoundException(`Post not found`);

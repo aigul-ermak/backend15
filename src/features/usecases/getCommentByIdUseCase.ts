@@ -1,4 +1,4 @@
-import {NotFoundException} from "@nestjs/common";
+import {ForbiddenException, NotFoundException} from "@nestjs/common";
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
 import {CommentsQueryRepository} from "../comments/infrastructure/comments.query-repository";
 import {
@@ -26,18 +26,20 @@ export class GetCommentByIdUseCase implements ICommandHandler<GetCommentByIdUseC
 
         const comment = await this.commentsQueryRepository.getCommentById(command.id);
 
+
         if (!comment) {
             throw new NotFoundException(`Comment not found`);
         }
 
         let status = 'None';
-        console.log(command.userId)
+
         if (command.userId) {
             const commentLike = await this.likesCommentQueryRepository.getLike(command.id, command.userId);
-            console.log(commentLike)
+
             status = commentLike ? commentLike.status : 'None';
         }
 
         return CommentLikeOutputModelMapper(comment, status);
+
     }
 }

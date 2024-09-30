@@ -1,10 +1,12 @@
 import {CommandHandler, ICommandHandler} from "@nestjs/cqrs";
-import {NotFoundException} from "@nestjs/common";
+import {ForbiddenException, NotFoundException} from "@nestjs/common";
 import {CommentsRepository} from "../comments/infrastructure/comments.repository";
 import {CommentsQueryRepository} from "../comments/infrastructure/comments.query-repository";
 
 export class DeleteCommentByIdUseCaseCommand {
-    constructor(public id: string) {
+    constructor(
+        public id: string,
+        public userId: string) {
     }
 }
 
@@ -22,6 +24,10 @@ export class DeleteCommentByIdUseCase implements ICommandHandler<DeleteCommentBy
 
         if (!comment) {
             throw new NotFoundException(`Comment not found`);
+        }
+
+        if (comment.commentatorInfo.userId !== command.userId) {
+            throw new ForbiddenException('User is not allowed to edit this comment');
         }
 
         return await this.commentsRepository.deleteComment(command.id);
