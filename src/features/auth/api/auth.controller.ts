@@ -19,6 +19,7 @@ import {ResendEmailDto} from "../../email/models/input/email.input.dto";
 import {CommandBus} from "@nestjs/cqrs";
 import {CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
 import {LoginUserUseCaseCommand} from "../../usecases/loginUserUseCase";
+import {ConfirmEmailUseCaseCommand} from "../../usecases/confirmEmailUseCase";
 
 
 @Controller('auth')
@@ -77,11 +78,13 @@ export class AuthController {
     @HttpCode(204)
     async confirmRegistration(@Body('code') code: string) {
 
-        const result: boolean = await this.authService.confirmEmail(code)
+        await this.commandBus.execute(new ConfirmEmailUseCaseCommand(code));
 
-        if (!result) {
-            throw new BadRequestException()
-        }
+        // const result: boolean = await this.authService.confirmEmail(code)
+        //
+        // if (!result) {
+        //     throw new BadRequestException()
+        // }
     }
 
     @Post('/registration')
