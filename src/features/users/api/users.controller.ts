@@ -4,7 +4,6 @@ import {
     Delete,
     Get,
     HttpCode,
-    NotFoundException,
     Param,
     Post,
     Query, UseGuards,
@@ -15,7 +14,7 @@ import {UserOutputModel} from "./models/output/user.output.model";
 import {UsersQueryRepository} from "../infrastructure/users.query-repository";
 import {BasicAuthGuard} from "../../../infrastructure/guards/basic-auth.guard";
 import {SortUserDto} from "./models/output/sort.user.dto";
-import {CreateUserUseCase, CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
+import {CreateUserUseCaseCommand} from "../../usecases/createUserUseCase";
 import {CommandBus} from "@nestjs/cqrs";
 import {GetAllUsersUseCaseCommand} from "../../usecases/getAllUsersUseCase";
 import {DeleteUserByIdUseCaseCommand} from "../../usecases/deleteUserByIdUseCase";
@@ -25,12 +24,8 @@ export class UsersController {
     usersService: UsersService;
 
     constructor(
-        userService: UsersService,
-        private readonly usersQueryRepository: UsersQueryRepository,
-        private createUserUseCase: CreateUserUseCase,
         private commandBus: CommandBus,
     ) {
-        this.usersService = userService;
     }
 
     @Post()
